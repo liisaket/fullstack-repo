@@ -1,25 +1,11 @@
 import { useState } from 'react'
 
 const StatisticLine = (props) => {
-  const { good, neutral, bad, all } = props.value
-  if (props.text === "average") {
-    return (
-      <div>
-        <p>{props.text} {(good*1+neutral*0+bad*-1)/all}</p>
-      </div>
-    )
-  }
-  if (props.text === "positive") {
-    return (
-      <div>
-        <p>{props.text} {(good/all)*100} %</p>
-      </div>
-    )
-  }
   return (
-    <div>
-      <p>{props.text} {props.value}</p>
-    </div>
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+    </tr>
   )
 }
 
@@ -34,12 +20,16 @@ const Statistics = ({stats}) => {
   }
   return (
     <div>
-      <StatisticLine text="good" value={stats.good} />
-      <StatisticLine text="neutral" value={stats.neutral} />
-      <StatisticLine text="bad" value={stats.bad} />
-      <StatisticLine text="all" value={stats.all} />
-      <StatisticLine text="average" value={stats} />
-      <StatisticLine text="positive" value={stats} />
+      <table>
+        <tbody>
+          <StatisticLine text="good" value={stats.good} />
+          <StatisticLine text="neutral" value={stats.neutral} />
+          <StatisticLine text="bad" value={stats.bad} />
+          <StatisticLine text="all" value={stats.all} />
+          <StatisticLine text="average" value={stats.average} />
+          <StatisticLine text="positive" value={stats.positive} />
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -57,7 +47,9 @@ const App = () => {
     good: good,
     neutral: neutral,
     bad: bad,
-    all: good+neutral+bad
+    all: good+neutral+bad,
+    average: (good*1+neutral*0+bad*-1)/(good+neutral+bad),
+    positive: (good/(good+neutral+bad))*100
   }
 
   return (
