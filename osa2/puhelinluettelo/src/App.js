@@ -1,6 +1,19 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
+import './index.css'
+
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="notif">
+      {message}
+    </div>
+  )
+}
 
 const Filter = ({ newFilter, handleFilterChange }) => {
   return (
@@ -50,6 +63,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [notifMessage, setnotifMessage] = useState(null)
   const names = persons.map(person => person.name)
 
   useEffect(() => {
@@ -65,7 +79,7 @@ const App = () => {
     if (names.includes(newName)) {
 
       if (window.confirm(
-        `${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        `${newName} is already added to the phonebook, replace the old number with a new one?`)) {
           
           const person = persons.find(p => p.name === newName)
           const changedPerson = { ...person, number: newNumber}
@@ -73,7 +87,14 @@ const App = () => {
           personService
             .update(person.id, changedPerson)
             .then(returnedPerson => {
-              setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
+              setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))})
+            .finally(notif => {
+              setnotifMessage(
+                `Changed ${newName}'s number`
+              )
+              setTimeout(() => {
+                setnotifMessage(null)
+              }, 5000)
             setNewName('')
             setNewNumber('')
             })
@@ -90,9 +111,17 @@ const App = () => {
           .create(nameObject)
             .then(returnedPerson => {
               setPersons(persons.concat(returnedPerson))
-              setNewName('')
-              setNewNumber('')
-          })
+            })
+            .finally(notif => {
+              setnotifMessage(
+                `Added ${newName} to the phonebook` 
+              )
+              setTimeout(() => {
+                setnotifMessage(null)
+              }, 5000)
+            })
+            setNewName('')
+            setNewNumber('')
       }
   }
 
@@ -102,6 +131,14 @@ const App = () => {
         .del(person.id)
           .then(() => {
             setPersons(persons.filter(p => p.id !== person.id))
+          })
+          .finally(notif => {
+            setnotifMessage(
+              `Deleted ${person.name} from the phonebook`
+            )
+            setTimeout(() => {
+              setnotifMessage(null)
+            }, 5000)
           })
     }
   }
@@ -125,6 +162,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification message={notifMessage} />
 
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
 
