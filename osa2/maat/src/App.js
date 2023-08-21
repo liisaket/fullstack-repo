@@ -8,15 +8,27 @@ const CountryName = ({ name }) => {
   }
   return (
     <div>
-    <p style={nameStyle}>
-    {name}</p>
-    </div>)
-  }
+      <p style={nameStyle}>
+        {name}</p>
+    </div>
+  )
+}
 
+const DisplayCountries = ({ handleChange, displayC }) => {
+  const countries = 
+    displayC.map(c =>
+      <CountryName key={c.name.common} name={c.name.common} onChange={handleChange}/>)
+  console.log(countries)
+  return (
+    countries.length >= 10
+      ? <p>Too many matches, please specify another filter</p>
+    : countries
+  )
+}
   
 const App = () => {
-  const [countryFilter, setFilter] = useState('')
   const [countries, setCountries] = useState([])
+  const [filteredC, setFiltered] = useState([])
 
   useEffect(() => {
     console.log("fetching all countries")
@@ -28,21 +40,17 @@ const App = () => {
     })
   }, [])
 
-  const showCountries =
-    countryFilter.length === 0
-      ? []
-      : countries.filter(
-          c => c.name.common.toLowerCase().includes(countryFilter.toLowerCase()))
-
   const handleChange = (event) => {
-    setFilter(event.target.value)
-    ///console.log(countries)
+    event.target.value === ""
+      ? setFiltered([])
+      : setFiltered(countries.filter(
+        c => c.name.common.toLowerCase().includes(event.target.value.toLowerCase())))
   }
 
   return (
     <div>
-      find countries <input value={countryFilter} onChange={handleChange}/>
-    {showCountries.map(c => <CountryName key={c.capitalInfo.latlng} name={c.name.common}/>)}
+      find countries <input onChange={handleChange}/>
+    <DisplayCountries handleChange={handleChange} displayC={filteredC}/>
     </div>
   )
 }
