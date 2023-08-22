@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const CountryName = ({ name }) => {
+const CountryName = ({ name, displayC, setFiltered }) => {
   const nameStyle = {
-    margin: '0px',
+    marginLeft: '0px',
     padding: '0px'
   }
   return (
     <div>
       <p style={nameStyle}>
-        {name}</p>
+        {name} <button onClick={() =>
+          setFiltered(displayC.filter(
+          c => c.name.common.toLowerCase().includes(name.toLowerCase())))}>
+          show</button></p>
     </div>
   )
 }
@@ -36,15 +39,16 @@ const CountryDetails = (props) => {
         languages:</p>
       <ul>
         {Object.entries(languages).map(([key, value]) =>
-          <li>{value}</li>)}
+          <li key={value}>
+            {value}</li>)}
       </ul>
       <img src={flag} alt='flag' height='150px'/>
     </div>
   )
 }
 
-const DisplayCountries = ({ handleChange, displayC }) => {
-  console.log(displayC.length)
+const DisplayCountries = (props) => {
+  const {handleChange, displayC, setFiltered } = props
   return (
     displayC.length >= 10
       ? <p>Too many matches, please specify another filter</p>
@@ -56,7 +60,11 @@ const DisplayCountries = ({ handleChange, displayC }) => {
           flag={c.flags.png}
           onChange={handleChange}/>)
     : displayC.map(c =>
-      <CountryName key={c.name.common} name={c.name.common} onChange={handleChange}/>)
+      <CountryName key={c.name.common}
+        name={c.name.common}
+        displayC={displayC}
+        setFiltered={setFiltered}
+        onChange={handleChange}/>)
   )
 }
   
@@ -84,7 +92,8 @@ const App = () => {
   return (
     <div>
       find countries <input onChange={handleChange}/>
-    <DisplayCountries handleChange={handleChange} displayC={filteredC}/>
+    <DisplayCountries handleChange={handleChange} displayC={filteredC}
+    setFiltered={setFiltered}/>
     </div>
   )
 }
