@@ -14,15 +14,49 @@ const CountryName = ({ name }) => {
   )
 }
 
-const DisplayCountries = ({ handleChange, displayC }) => {
-  const countries = 
-    displayC.map(c =>
-      <CountryName key={c.name.common} name={c.name.common} onChange={handleChange}/>)
-  console.log(countries)
+const CountryDetails = (props) => {
+  const nameStyle = {
+    margin: '0px',
+    padding: '0px'
+  }
+  const langStyle = {
+    marginLeft: '0px',
+    padding: '0px',
+    fontWeight: 'bold'
+  }
+  const { name, capital, area, 
+          languages, flag } = props
   return (
-    countries.length >= 10
+    <div>
+      <h2>{name}</h2>
+      <p style={nameStyle}>
+        capital {capital}<br></br>
+        area {area}</p>
+      <p style={langStyle}>
+        languages:</p>
+      <ul>
+        {Object.entries(languages).map(([key, value]) =>
+          <li>{value}</li>)}
+      </ul>
+      <img src={flag} alt='flag' height='150px'/>
+    </div>
+  )
+}
+
+const DisplayCountries = ({ handleChange, displayC }) => {
+  console.log(displayC.length)
+  return (
+    displayC.length >= 10
       ? <p>Too many matches, please specify another filter</p>
-    : countries
+    : displayC.length === 1
+      ? displayC.map(c =>
+        <CountryDetails key={c.name.common}
+          name={c.name.common} capital={c.capital}
+          area={c.area} languages={c.languages}
+          flag={c.flags.png}
+          onChange={handleChange}/>)
+    : displayC.map(c =>
+      <CountryName key={c.name.common} name={c.name.common} onChange={handleChange}/>)
   )
 }
   
