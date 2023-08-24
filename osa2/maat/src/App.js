@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+const api_key = process.env.REACT_APP_API_KEY
+
 const CountryName = ({ name, displayC, setFiltered }) => {
   const nameStyle = {
     marginLeft: '0px',
@@ -27,24 +29,48 @@ const CountryDetails = (props) => {
     padding: '0px',
     fontWeight: 'bold'
   }
+  const [weather, setWeather] = useState([])
   const { name, capital, area, 
-          languages, flag } = props
-  return (
-    <div>
-      <h2>{name}</h2>
-      <p style={nameStyle}>
-        capital {capital}<br></br>
-        area {area}</p>
-      <p style={langStyle}>
-        languages:</p>
-      <ul>
-        {Object.entries(languages).map(([key, value]) =>
-          <li key={value}>
-            {value}</li>)}
-      </ul>
-      <img src={flag} alt='flag' height='150px'/>
-    </div>
-  )
+          languages, flag, latlng } = props
+
+  const url =
+  `https://api.openweathermap.org/data/2.5/weather?lat=`
+    + `${latlng[0]}&lon=${latlng[1]}&units=metric&appid=${api_key}`
+  
+  useEffect(() => {
+    axios
+      .get(url)
+      .then(response => {
+        setWeather(response.data)
+    })
+  }, [])
+
+  if (weather.length === 0) {
+    return null
+    } else {
+    const wurl =
+    `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`
+    return (
+      <div>
+        <h2>{name}</h2>
+        <p style={nameStyle}>
+          capital {capital}<br></br>
+          area {area}</p>
+        <p style={langStyle}>
+          languages:</p>
+        <ul>
+          {Object.entries(languages).map(([key, value]) =>
+            <li key={value}>
+              {value}</li>)}
+        </ul>
+        <img src={flag} alt='flag' height='130px'/>
+        <h3>Weather in {capital}</h3>
+        <p>temperature {weather.main.temp} Celcius</p>
+        <img src={wurl} alt='icon'/>
+        <p>wind {weather.wind.speed} ms/s</p>
+      </div>
+    )
+  }
 }
 
 const DisplayCountries = (props) => {
@@ -57,7 +83,7 @@ const DisplayCountries = (props) => {
         <CountryDetails key={c.name.common}
           name={c.name.common} capital={c.capital}
           area={c.area} languages={c.languages}
-          flag={c.flags.png}
+          flag={c.flags.png} latlng={c.latlng}
           onChange={handleChange}/>)
     : displayC.map(c =>
       <CountryName key={c.name.common}
