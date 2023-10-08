@@ -106,7 +106,8 @@ const App = () => {
               )
               setTimeout(() => {
                 setnotifMessage(null)
-              }, 5000)})
+              }, 5000)
+            })
             .catch(error => {
                 seterrorMessage(
                   `Information of ${person.name} has already been removed from the server`
@@ -116,8 +117,8 @@ const App = () => {
                 }, 5000)
                 setPersons(persons.filter(p => p.id !== person.id))
               })
-              setNewName('')
-              setNewNumber('')
+            setNewName('')
+            setNewNumber('')
       }}
 
       else {
@@ -131,17 +132,21 @@ const App = () => {
           .create(nameObject)
             .then(returnedPerson => {
               setPersons(persons.concat(returnedPerson))
-            })
-            .finally(notif => {
               setnotifMessage(
-                `Added ${newName} to the phonebook` 
-              )
+                `Added ${newName} to the phonebook`)
               setTimeout(() => {
                 setnotifMessage(null)
+              }, 5000)}
+            )
+            .catch(error => {
+              seterrorMessage(
+                `Failed to add ${newName} to the phonebook`)
+              setTimeout(() => {
+                seterrorMessage(null)
               }, 5000)
             })
-            setNewName('')
-            setNewNumber('')
+        setNewName('')
+        setNewNumber('')
       }
   }
 
