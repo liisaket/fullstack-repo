@@ -146,7 +146,7 @@ const App = () => {
             )
             .catch(error => {
               seterrorMessage(
-                `Failed to add ${newName} to the phonebook`)
+                error.response.data.error)
               setTimeout(() => {
                 seterrorMessage(null)
               }, 5000)
