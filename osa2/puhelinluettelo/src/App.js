@@ -109,13 +109,19 @@ const App = () => {
               }, 5000)
             })
             .catch(error => {
+              if (error.response.data.error === undefined) {
                 seterrorMessage(
-                  `Information of ${person.name} has already been removed from the server`
+                  `Information of ${newName} has already been removed from the server`
                 )
+                setPersons(persons.filter(p => p.id !== person.id))
+              } else {
+                seterrorMessage(
+                  error.response.data.error
+                )
+              }
                 setTimeout(() => {
                   seterrorMessage(null)
                 }, 5000)
-                setPersons(persons.filter(p => p.id !== person.id))
               })
             setNewName('')
             setNewNumber('')
@@ -156,14 +162,12 @@ const App = () => {
         .del(person.id)
           .then(() => {
             setPersons(persons.filter(p => p.id !== person.id))
-          })
-          .finally(notif => {
             setnotifMessage(
               `Deleted ${person.name} from the phonebook`
             )
             setTimeout(() => {
               setnotifMessage(null)
-            }, 5000)
+            }, 5000) 
           })
     }
   }
