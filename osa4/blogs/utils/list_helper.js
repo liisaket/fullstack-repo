@@ -1,4 +1,4 @@
-const logger = require('../utils/logger')
+const _ = require('lodash')
 
 const dummy = (blogs) => {
   return 1
@@ -23,8 +23,23 @@ const favoriteBlog = (blogs) => {
   }
 }
 
+const mostBlogs = (blogs) => {
+  const authors = blogs.map(blog => blog.author)
+  const results = _.values(_.groupBy(authors)).map(b => ({ author: b[0], blogs: b.length }))
+  const mostblogs = Math.max(...results.map(b => b.blogs))
+  for (id in results) {
+    if (results[id].blogs === mostblogs) {
+      return {
+        'author': results[id].author,
+        'blogs': results[id].blogs
+      }
+    }
+  }
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 }
