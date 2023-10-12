@@ -1,14 +1,13 @@
-require('dotenv').config()
-const http = require('http')
+const config = require('./utils/config')
 const express = require('express')
 const app = express()
-const config = require('./utils/config')
 const cors = require('cors')
-const mongoose = require('mongoose')
-const logger = require('./utils/logger')
 const theRouter = require('./controllers/routes')
+const middleware = require('./utils/middleware')
+const logger = require('./utils/logger')
+const mongoose = require('mongoose')
 
-const mongoUrl = config.MONGODB_URI
+mongoose.set('strictQuery', false)
 
 logger.info('connecting to', config.MONGODB_URI)
 
@@ -21,8 +20,13 @@ mongoose.connect(config.MONGODB_URI)
   })
 
 app.use(cors())
+app.use(express.static('build'))
 app.use(express.json())
+app.use(middleware.requestLogger)
 
 app.use('/api/blogs', theRouter)
+
+app.use(middleware.unknownEndpoint)
+app.use(middleware.errorHandler)
 
 module.exports = app

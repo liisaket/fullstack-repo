@@ -39,14 +39,14 @@ const mostBlogs = (blogs) => {
 
 function merge(first, second) {
   if (first.author === second.author) {
-      first.likes = second.likes = [].concat(first.likes, second.likes).reduce((a,b) => a+b,0)
-      return true
+    first.likes = second.likes = [].concat(first.likes, second.likes).reduce((a,b) => a+b,0)
+    return true
   }
   return false
 }
 
 const mostLikes = (blogs) => {
-  const allLikes = blogs.map(blog => ({author: blog.author, likes: blog.likes}))
+  const allLikes = blogs.map(blog => ({ author: blog.author, likes: blog.likes }))
   const theirLikes = _.uniqWith(allLikes, merge)
   const mostLikes = Math.max(...theirLikes.map(b => b.likes))
   for (id in theirLikes) {
