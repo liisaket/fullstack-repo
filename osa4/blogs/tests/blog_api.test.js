@@ -42,9 +42,9 @@ test('there is a specific blog', async () => {
 
 test('a valid blog can be added', async () => {
   const newBlog = {
-    title: "Canonical string reduction",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    title: 'Canonical string reduction',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
     likes: 12
   }
 
@@ -65,7 +65,7 @@ test('a valid blog can be added', async () => {
 
 test('blog without title/url is not added', async () => {
   const newBlog = {
-    author: "Edsger W. Dijkstra",
+    author: 'Edsger W. Dijkstra',
     likes: 12
   }
 
@@ -81,9 +81,9 @@ test('blog without title/url is not added', async () => {
 
 test('likes is 0', async () => {
   newBlog = {
-    title: "First class tests",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll"
+    title: 'First class tests',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll'
   }
 
   await api
@@ -94,7 +94,7 @@ test('likes is 0', async () => {
 
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-  
+
   const contents = blogsAtEnd.map(n => n.likes)
   expect(contents).toContain(
     0
@@ -131,6 +131,31 @@ test('a blog can be deleted', async () => {
   const contents = blogsAtEnd.map(r => r.title)
 
   expect(contents).not.toContain(blogToDelete.title)
+})
+
+test('a blog info can be updated', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToUpdate = blogsAtStart[0]
+  const updatedBlog = {
+    likes: 10
+  }
+
+  await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedBlog)
+    .expect(201)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+
+  expect(blogsAtEnd[0]).toEqual(
+    { id: blogToUpdate.id,
+      title: 'React patterns',
+      author: 'Michael Chan',
+      url: 'https://reactpatterns.com/',
+      likes: 10,
+    }
+  )
 })
 
 afterAll(async () => {
