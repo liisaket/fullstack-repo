@@ -33,12 +33,12 @@ theRouter.post('/', async (request, response) => {
 theRouter.put('/:id', async (request, response) => {
   const { title, author, url, likes } = request.body
 
-  await Blog.findByIdAndUpdate(
+  const savedBlog = await Blog.findByIdAndUpdate(
     request.params.id,
     { title, author, url, likes },
     { new: true })
 
-  response.status(201).end()
+  response.status(201).json(savedBlog)
 })
 
 

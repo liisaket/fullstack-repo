@@ -136,26 +136,24 @@ test('a blog can be deleted', async () => {
 test('a blog info can be updated', async () => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToUpdate = blogsAtStart[0]
-  const updatedBlog = {
-    likes: 10
+  const wantedBlog = { id: blogToUpdate.id,
+    title: 'React patterns',
+    author: 'Michael Chan',
+    url: 'https://reactpatterns.com/',
+    likes: 10,
   }
 
-  await api
+  const resultBlog = await api
     .put(`/api/blogs/${blogToUpdate.id}`)
-    .send(updatedBlog)
+    .send({ likes: 10 })
     .expect(201)
+    .expect('Content-Type', /application\/json/)
 
+  expect(resultBlog.body).toEqual(wantedBlog)
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 
-  expect(blogsAtEnd[0]).toEqual(
-    { id: blogToUpdate.id,
-      title: 'React patterns',
-      author: 'Michael Chan',
-      url: 'https://reactpatterns.com/',
-      likes: 10,
-    }
-  )
+  expect(blogsAtEnd[0]).toEqual(wantedBlog)
 })
 
 afterAll(async () => {
