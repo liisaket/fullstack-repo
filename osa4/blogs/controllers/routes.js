@@ -6,6 +6,15 @@ theRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
+theRouter.get('/:id', async (request, response, next) => {
+  const blog = await Blog.findById(request.params.id)
+  if (blog) {
+    response.json(blog)
+  } else {
+    response.status(404).end()
+  }
+})
+
 theRouter.post('/', async (request, response, next) => {
   const body = request.body
 
@@ -13,14 +22,16 @@ theRouter.post('/', async (request, response, next) => {
     title: body.title,
     author: body.author,
     url: body.url,
-    likes: body.likes
+    likes: body.likes || 0
   })
-  try {
-    const savedBlog = await blog.save()
-    response.status(201).json(savedBlog)
-  } catch(exception) {
-    next(exception)
-  }
+  
+  const savedBlog = await blog.save()
+  response.status(201).json(savedBlog)
+})
+
+theRouter.delete('/:id', async (request, response, next) => {
+  await Blog.findByIdAndRemove(request.params.id)
+  response.status(204).end()
 })
 
 module.exports = theRouter
