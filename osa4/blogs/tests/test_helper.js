@@ -18,9 +18,9 @@ const initialBlogs = [
 
 const nonExistingId = async () => {
   const blog = new Blog({
-    title: "TDD harms architecture",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
+    title: 'TDD harms architecture',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
   })
   await blog.save()
   await blog.deleteOne()

@@ -69,10 +69,10 @@ describe('when there is initially one user at db', () => {
     }
 
     const result = await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
 
     expect(result.body.error).toContain(
       'User validation failed: `username` is shorter than the minimum allowed length (3).'
@@ -92,10 +92,10 @@ describe('when there is initially one user at db', () => {
     }
 
     const result = await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
 
     expect(result.body.error).toContain(
       'User validation failed: `password` is shorter than the minimum allowed length (3).'
@@ -104,7 +104,7 @@ describe('when there is initially one user at db', () => {
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
-  
+
   test('creation fails if username&&password length is less than 3', async () => {
     const usersAtStart = await helper.usersInDb()
 
@@ -115,10 +115,10 @@ describe('when there is initially one user at db', () => {
     }
 
     const result = await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
 
     expect(result.body.error).toContain(
       'User validation failed: `username` and `password are shorther than the minimum allowed length (3).'

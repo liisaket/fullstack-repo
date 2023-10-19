@@ -42,17 +42,17 @@ describe('when there is initially some blogs saved', () => {
   })
 
   describe('viewing a specific blog', () => {
-    
+
     test('succeeds with a valid id', async () => {
       const blogsAtStart = await helper.blogsInDb()
-    
+
       const blogToView = blogsAtStart[0]
-    
+
       const resultBlog = await api
         .get(`/api/blogs/${blogToView.id}`)
         .expect(200)
         .expect('Content-Type', /application\/json/)
-    
+
       expect(resultBlog.body).toEqual(blogToView)
     })
 
@@ -74,7 +74,7 @@ describe('when there is initially some blogs saved', () => {
   })
 
   describe('adding a new blog', () => {
-    
+
     test('succeeds with valid data', async () => {
       const newBlog = {
         title: 'Canonical string reduction',
@@ -104,16 +104,16 @@ describe('when there is initially some blogs saved', () => {
         author: 'Robert C. Martin',
         url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll'
       }
-    
+
       await api
         .post('/api/blogs')
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
-    
+
       const blogsAtEnd = await helper.blogsInDb()
       expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-    
+
       const contents = blogsAtEnd.map(n => n.likes)
       expect(contents).toContain(
         0
@@ -141,19 +141,19 @@ describe('when there is initially some blogs saved', () => {
     test('succeeds with 204 if valid id', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart[0]
-    
+
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
         .expect(204)
-    
+
       const blogsAtEnd = await helper.blogsInDb()
-    
+
       expect(blogsAtEnd).toHaveLength(
         helper.initialBlogs.length - 1
       )
-    
+
       const contents = blogsAtEnd.map(r => r.title)
-    
+
       expect(contents).not.toContain(blogToDelete.title)
     })
   })
@@ -168,17 +168,17 @@ describe('when there is initially some blogs saved', () => {
         url: 'https://reactpatterns.com/',
         likes: 10,
       }
-    
+
       const resultBlog = await api
         .put(`/api/blogs/${blogToUpdate.id}`)
         .send({ likes: 10 })
         .expect(201)
         .expect('Content-Type', /application\/json/)
-    
+
       expect(resultBlog.body).toEqual(wantedBlog)
       const blogsAtEnd = await helper.blogsInDb()
       expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
-    
+
       expect(blogsAtEnd[0]).toEqual(wantedBlog)
     })
   })
