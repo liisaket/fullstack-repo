@@ -220,6 +220,39 @@ describe('when there is initially some blogs saved', () => {
       expect(contents).not.toContain(blogToDelete.body.title)
     })
 
+    test('deleting a blog fails with 401 if token is missing', async () => {
+      const testBlog = {
+        title: 'Test blog',
+        author: 'Tester',
+        url: 'http://www.cs.utexas.edu/'
+      }
+
+      const blogToDelete = await api
+        .post('/api/blogs')
+        .send(testBlog)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+      const blogsCurrently = await helper.blogsInDb()
+      expect(blogsCurrently).toHaveLength(
+        helper.initialBlogs.length + 1
+      )
+
+      await api
+        .delete(`/api/blogs/${blogToDelete.body.id}`)
+        .expect(401)
+
+      const blogsAtEnd = await helper.blogsInDb()
+
+      expect(blogsAtEnd).toHaveLength(
+        helper.initialBlogs.length + 1
+      )
+
+      const contents = blogsAtEnd.map(r => r.title)
+      expect(contents).toContain(blogToDelete.body.title)
+    })
+
     test('a blog info can be updated', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToUpdate = blogsAtStart[0]
