@@ -13,7 +13,7 @@ const NewAnecdote = () => {
     const newAnec = await anecService.createNew(content)
     dispatch(createAnec(content))
 
-    dispatch(notifReducer(`added a new anecdote "${content}"`))
+    dispatch(notifReducer(`added a new anecdote "${newAnec.content}"`))
     setTimeout(() => {
       dispatch(notifReducer(null))}, 5000) 
   }
