@@ -10,7 +10,6 @@ const NewAnecdote = () => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
-    const newAnec = await anecService.createNew(content)
     dispatch(createAnec(content))
 
     dispatch(notifReducer(`added a new anecdote "${newAnec.content}"`))
