@@ -27,7 +27,6 @@ export const initializeAnecdotes = () => {
   }
 }
 
-/// VIRHE koodissa, lisää 2 anecdottia databaseen
 export const createAnec = content => {
   return async dispatch => {
     const newAnec = await anecService.createNew(content)
