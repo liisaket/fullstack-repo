@@ -1,7 +1,8 @@
-import { useSelector } from 'react-redux'
+import { useContext } from 'react'
+import NotifContext from '../NotifContext'
 
 const Notification = () => {
-  const notification = useSelector(state => state.notification)
+  const [notif, dispatch] = useContext(NotifContext)
 
   const style = {
     border: 'solid',
@@ -9,15 +10,14 @@ const Notification = () => {
     borderWidth: 1
   }
 
-  if (notification === null) {
+  if (notif === null) {
     return null
   } else {
     return (
       <div>
         <div style={style}>
-          {notification}
+          {notif}
         </div>
-        <br></br>
       </div>
     )
   }
