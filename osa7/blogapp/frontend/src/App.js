@@ -7,63 +7,29 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import storageService from './services/storage'
 
-import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import { initializeBlogs } from './reducers/blogReducer'
+import BlogList from './components/BlogList'
 
 
 const App = () => {
   const dispatch = useDispatch()
-
-  const [blogs, setBlogs] = useState([])
+  const [user, setUser] = useState('')
   const blogFormRef = useRef()
 
-  const [user, setUser] = useState('')
-
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
-  }, [])
+    blogService.getAll().then(blogs => {
+      dispatch(initializeBlogs(blogs))
+    })
+  }, [dispatch])
 
   useEffect(() => {
     const user = storageService.loadUser()
     setUser(user)
   }, [])
-
-  const createBlog = async (newBlog) => {
-    blogFormRef.current.toggleVisibility()
-    try {
-      const createdBlog = await blogService.create(newBlog)
-      blogs.concat(createdBlog)
-      const response = await blogService.getAll()
-      setBlogs(response)
-      dispatch(setNotification(`Added a new blog ${createdBlog.title} by ${createdBlog.author}`))
-    } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'error'))
-    }
-  }
-
-  const like = async (blog) => {
-    try {
-      await blogService.update({ ...blog, likes: blog.likes + 1, user: blog.user.id })
-      const response = await blogService.getAll()
-      setBlogs(response)
-      dispatch(setNotification(`a like for the blog '${blog.title}' by '${blog.author}'`))
-    } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'error'))
-    }
-  }
-
-  const remove = async (blog) => {
-    if (window.confirm(`sure you want to remove blog ${blog.title} by ${blog.author}?`)) {
-      await blogService.remove(blog.id, user.token)
-      setBlogs(blogs.filter(b => b.id !== blog.id))
-      dispatch(setNotification(`removed blog '${blog.title}' by ${blog.author}`))
-    }
-  }
 
   const login = async (username, password) => {
     try {
@@ -93,15 +59,10 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button onClick={logout}>logout</button>
         <Togglable buttonLabel='create new blog' ref={blogFormRef}>
-          <BlogForm createBlog={createBlog} />
+          <BlogForm blogFormRef={blogFormRef} />
         </Togglable>
         <br></br>
-        {blogs.sort(function(first, second) {
-          return second.likes - first.likes}).map(blog =>
-          <Blog key={blog.id} blog={blog}
-            like={() => like(blog)} remove={() => remove(blog)}
-            canRemove={user && blog.user.username===user.username}/>
-        )}
+        <BlogList user={user}/>
       </div>
       }
     </div>
