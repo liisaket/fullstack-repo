@@ -12,6 +12,10 @@ const removeUser = () => {
   localStorage.removeItem(KEY)
 }
 
+const setHeaders = () => {
+  return { 'Authorization': loadUser() ? `Bearer ${loadUser().token}` : null }
+}
+
 export default {
-  saveUser, loadUser, removeUser
+  saveUser, loadUser, removeUser, setHeaders
 }

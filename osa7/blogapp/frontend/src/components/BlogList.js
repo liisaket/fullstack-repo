@@ -3,10 +3,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notifReducer'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 
-const BlogList = ({ user }) => {
+const BlogList = () => {
   const blogs = useSelector(state => {
     return state.blogs
   })
+
+  const user = useSelector(state => {
+    return state.user})
 
   const byLikes = (blog1, blog2) => blog2.likes - blog1.likes
   const dispatch = useDispatch()
@@ -33,11 +36,13 @@ const BlogList = ({ user }) => {
 
   return (
     <div>
-      {[...blogs].sort(byLikes).map(blog =>
-        <Blog key={blog.id} blog={blog}
-          like={() => like(blog)} remove={() => remove(blog)}
-          canRemove={user && blog.user.username===user.username}/>
-      )}
+      {user && <div>
+        {[...blogs].sort(byLikes).map(blog =>
+          <Blog key={blog.id} blog={blog}
+            like={() => like(blog)} remove={() => remove(blog)}
+            canRemove={user && blog.user.username===user.username}/>
+        )}
+      </div>}
     </div>
   )}
 
