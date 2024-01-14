@@ -1,68 +1,66 @@
-const theRouter = require('express').Router()
-const { tokenExtractor, userExtractor } = require('../utils/middleware')
+const router = require('express').Router()
 const Blog = require('../models/blog')
 
-theRouter.get('/', async (request, response) => {
+const { userExtractor } = require('../utils/middleware')
+
+router.get('/', async (request, response) => {
   const blogs = await Blog
-    .find({}).populate('user', { username: 1, name: 1 })
+    .find({})
+    .populate('user', { username: 1, name: 1 })
+
   response.json(blogs)
 })
 
-theRouter.get('/:id', async (request, response) => {
-  const blog = await Blog.findById(request.params.id)
-  if (blog) {
-    response.json(blog)
-  } else {
-    response.status(404).end()
-  }
-})
+router.post('/', userExtractor, async (request, response) => {
+  const { title, author, url, likes } = request.body
+  const blog = new Blog({
+    title, author, url, 
+    likes: likes ? likes : 0
+  })
 
-theRouter.post('/', tokenExtractor, userExtractor, async (request, response) => {
-  const body = request.body
   const user = request.user
 
   if (!user) {
-    return response.status(401).json({ error: 'invalid user' })
+    return response.status(401).json({ error: 'operation not permitted' })
   }
 
-  const blog = new Blog({
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes || 0,
-    user: user._id
-  })
+  blog.user = user._id
 
-  const savedBlog = await blog.save()
-  user.blogs = user.blogs.concat(savedBlog._id)
+  let createdBlog = await blog.save()
+
+  user.blogs = user.blogs.concat(createdBlog._id)
   await user.save()
 
-  response.status(201).json(savedBlog)
+  createdBlog = await Blog.findById(createdBlog._id).populate('user') 
+
+  response.status(201).json(createdBlog)
 })
 
+router.put('/:id', async (request, response) => {
+  const { title, url, author, likes } = request.body
 
-theRouter.put('/:id', async (request, response) => {
-  const { title, author, url, likes } = request.body
+  let updatedBlog = await Blog.findByIdAndUpdate(request.params.id,  { title, url, author, likes }, { new: true })
 
-  const savedBlog = await Blog.findByIdAndUpdate(
-    request.params.id,
-    { title, author, url, likes },
-    { new: true })
+  updatedBlog = await Blog.findById(updatedBlog._id).populate('user') 
 
-  response.status(201).json(savedBlog)
+  response.json(updatedBlog)
 })
 
-
-theRouter.delete('/:id', tokenExtractor, userExtractor, async (request, response) => {
+router.delete('/:id', userExtractor, async (request, response) => {
   const blog = await Blog.findById(request.params.id)
+
   const user = request.user
 
-  if (blog.user.toString() === user.id.toString()) {
-    await Blog.findByIdAndRemove(request.params.id)
-    response.status(204).end()
-  } else {
-    return response.status(401).json({ error: 'invalid user' })
+  if (!user || blog.user.toString() !== user.id.toString()) {
+    return response.status(401).json({ error: 'operation not permitted' })
   }
+
+  user.blogs = user.blogs.filter(b => b.toString() !== blog.id.toString() )
+
+  await user.save()
+  await blog.deleteOne()
+  
+  response.status(204).end()
 })
 
-module.exports = theRouter
+module.exports = router
