@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   BrowserRouter as Router,
@@ -17,10 +17,12 @@ import Logout from './components/Logout'
 import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
 import Users from './components/Users'
+import User from './components/User'
 
 
 const App = () => {
   const dispatch = useDispatch()
+  const [users, setUsers] = useState([])
   const user = useSelector(state => {
     return state.user})
 
@@ -38,6 +40,11 @@ const App = () => {
     dispatch(getUser())
   }, [dispatch])
 
+  useEffect(() => {
+    userService.getAll().then(users => {
+      setUsers(users)
+    })
+  }, [])
 
   return (
     <Router>
@@ -55,7 +62,8 @@ const App = () => {
                 <BlogForm />
                 <BlogList />
               </div>}/>
-            <Route path="/users" element={<Users />} />
+            <Route path="/users" element={<Users users={users}/>} />
+            <Route path="/users/:id" element={<User users={users}/>} />
           </Routes>
         </div>
         }
