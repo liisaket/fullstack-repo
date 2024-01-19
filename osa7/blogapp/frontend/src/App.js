@@ -16,6 +16,7 @@ import LoginForm from './components/LoginForm'
 import Logout from './components/Logout'
 import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
+import Blog from './components/Blog2'
 import Users from './components/Users'
 import User from './components/User'
 
@@ -46,6 +47,11 @@ const App = () => {
     })
   }, [])
 
+  const blogs = useSelector(state => {
+    return state.blogs
+  })
+  // <Route path="/blogs/:id" element={<Blog />} />
+
   return (
     <Router>
       <div>
@@ -63,7 +69,8 @@ const App = () => {
                 <BlogList />
               </div>}/>
             <Route path="/users" element={<Users users={users}/>} />
-            <Route path="/users/:id" element={<User users={users}/>} />
+            <Route path="/users/:id" element={<User users={users} />} />
+            <Route path="/blogs/:id" element={<Blog blogs={blogs} />} />
           </Routes>
         </div>
         }

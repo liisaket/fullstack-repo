@@ -1,13 +1,21 @@
-import Blog from './Blog2'
+import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notifReducer'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 
-const BlogList = () => {
-  const blogs = useSelector(state => {
-    return state.blogs
-  })
+const Blog = ({ blogs }) => {
+  const dispatch = useDispatch()
+  const id = useParams().id
+  const blog = blogs.find(blog => blog.id === id)
+  const user = useSelector(state => {
+    return state.user})
+
+  if (!blog || !user) {
+    return null
+  }
+  const canRemove = user && blog.user.username===user.username
 
   const style = {
     paddingTop: 10,
@@ -16,12 +24,6 @@ const BlogList = () => {
     borderWidth: 1,
     marginBottom: 5
   }
-
-  const user = useSelector(state => {
-    return state.user})
-
-  const byLikes = (blog1, blog2) => blog2.likes - blog1.likes
-  const dispatch = useDispatch()
 
   const like = async (blog) => {
     try {
@@ -43,24 +45,16 @@ const BlogList = () => {
     }
   }
 
-  /*{[...blogs].sort(byLikes).map(blog =>
-    <Blog key={blog.id} blogs={blogs}
-      like={() => like(blog)} remove={() => remove(blog)}
-      canRemove={user && blog.user.username===user.username}/>
-  )}*/
-
   return (
     <div>
-      {user && <div>
-        {[...blogs].sort(byLikes).map(blog => {
-          return (
-            <div key={blog.id} style={style}>
-              <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-            </div>
-          )}
-        )}
-      </div>}
+      <h2>{blog.title} by {blog.author}</h2>
+      <div>
+        <div> <a href={blog.url}>{blog.url}</a> </div>
+        <div>{blog.likes} likes <button onClick={() => like(blog)}>like</button></div>
+        <div>added by {blog.user && blog.user.name}</div>
+        {canRemove&&<button onClick={() => remove(blog)}>delete</button>}
+      </div>
     </div>
   )}
 
-export default BlogList
+export default Blog
