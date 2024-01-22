@@ -1,8 +1,5 @@
-import Blog from './Blog2'
 import { Link } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { setNotification } from '../reducers/notifReducer'
-import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import { useSelector } from 'react-redux'
 
 const BlogList = () => {
   const blogs = useSelector(state => {
@@ -21,27 +18,6 @@ const BlogList = () => {
     return state.user})
 
   const byLikes = (blog1, blog2) => blog2.likes - blog1.likes
-  const dispatch = useDispatch()
-
-  const like = async (blog) => {
-    try {
-      dispatch(likeBlog(blog))
-      dispatch(setNotification(`a like for the blog '${blog.title}' by '${blog.author}'`))
-    } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'error'))
-    }
-  }
-
-  const remove = async (blog) => {
-    try {
-      if (window.confirm(`sure you want to remove blog ${blog.title} by ${blog.author}?`)) {
-        dispatch(removeBlog(blog))
-        dispatch(setNotification(`removed blog '${blog.title}' by ${blog.author}`))
-      }
-    } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'error'))
-    }
-  }
 
   /*{[...blogs].sort(byLikes).map(blog =>
     <Blog key={blog.id} blogs={blogs}

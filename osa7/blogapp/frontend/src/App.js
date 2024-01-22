@@ -13,10 +13,10 @@ import userService from './services/users'
 
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
-import Logout from './components/Logout'
+import Menu from './components/Menu'
 import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
-import Blog from './components/Blog2'
+import Blog from './components/Blog'
 import Users from './components/Users'
 import User from './components/User'
 
@@ -26,10 +26,6 @@ const App = () => {
   const [users, setUsers] = useState([])
   const user = useSelector(state => {
     return state.user})
-
-  const padding = {
-    paddingRight: 5
-  }
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
@@ -55,13 +51,11 @@ const App = () => {
   return (
     <Router>
       <div>
-        <h2>blogs</h2>
+        <Menu />
+        <h2>blog app</h2>
         <Notification />
         <LoginForm />
         {user && <div>
-          <Link style={padding} to="/">home</Link>
-          <Link style={padding} to="/users">users</Link>
-          <Logout />
           <Routes>
             <Route path="/" element={
               <div>

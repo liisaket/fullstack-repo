@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const blog = require('../models/blog')
 const Blog = require('../models/blog')
 
 const { userExtractor } = require('../utils/middleware')
@@ -34,6 +35,22 @@ router.post('/', userExtractor, async (request, response) => {
   createdBlog = await Blog.findById(createdBlog._id).populate('user') 
 
   response.status(201).json(createdBlog)
+})
+
+router.post('/:id/comments', async (request, response) => {
+  const { comment } = request.body
+
+  const user = request.user
+
+  if (!user) {
+    return response.status(401).json({ error: 'operation not permitted' })
+  }
+
+  const blog = await Blog.findById(request.params.id)
+  blog.comments = blog.comments.concat(comment)
+  savedBlog = await blog.save()
+
+  response.status(201).json(savedBlog)
 })
 
 router.put('/:id', async (request, response) => {
