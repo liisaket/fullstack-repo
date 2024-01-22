@@ -39,9 +39,7 @@ export const createBlog = (object) => {
 
 export const likeBlog = (object) => {
   return async dispatch => {
-    console.log(object)
     const toLike = { ...object, likes: object.likes + 1 }
-    console.log(toLike)
     const blog = await blogService.update(toLike)
     dispatch(update({ ...blog, user: object.user }))
   }
@@ -51,6 +49,13 @@ export const commentBlog = (object) => {
   return async dispatch => {
     const blog = await blogService.comment(object)
     dispatch(update({ ...blog, user: object.user }))
+  }
+}
+
+export const removeComment = (object) => {
+  return async dispatch => {
+    const blog = await blogService.removeComment(object)
+    dispatch(update({ ...blog }))
   }
 }
 

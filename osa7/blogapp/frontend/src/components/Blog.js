@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notifReducer'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 import CommentForm from './CommentForm'
+import Comments from './Comments'
 
 const Blog = ({ blogs }) => {
   const dispatch = useDispatch()
@@ -15,6 +16,7 @@ const Blog = ({ blogs }) => {
   if (!blog || !user) {
     return null
   }
+
   const canRemove = user && blog.user.username===user.username
 
   const like = async (blog) => {
@@ -26,7 +28,7 @@ const Blog = ({ blogs }) => {
     }
   }
 
-  const remove = async (blog) => {
+  const removeB = async (blog) => {
     try {
       if (window.confirm(`sure you want to remove blog ${blog.title} by ${blog.author}?`)) {
         dispatch(removeBlog(blog))
@@ -45,19 +47,11 @@ const Blog = ({ blogs }) => {
         <div> <a href={blog.url}>{blog.url}</a> </div>
         <div>{blog.likes} likes <button onClick={() => like(blog)}>like</button></div>
         <div>added by {blog.user && blog.user.name}</div>
-        {canRemove&&<button onClick={() => remove(blog)}>delete</button>}
+        {canRemove&&<button onClick={() => removeB(blog)}>delete</button>}
       </div>
       <h3>comments</h3>
-      <CommentForm blog={blog}/>
-      <ul>
-        {blog.comments.map((comment, index) => {
-          return (
-            <div key={index}>
-              <li>{comment}</li>
-            </div>
-          )}
-        )}
-      </ul>
+      <CommentForm blog={blog} />
+      <Comments blog={blog} />
     </div>
   )}
 

@@ -58,6 +58,19 @@ router.put('/:id', async (request, response) => {
   response.json(updatedBlog)
 })
 
+router.put('/:id/comments', async (request, response) => {
+  const id = request.body.index
+  const blog = await Blog.findById(request.params.id)
+  
+  blog.comments.splice(id, 1)
+  
+  let updatedBlog = await blog.save()
+
+  updatedBlog = await Blog.findById(updatedBlog._id).populate('user')
+  
+  response.json(updatedBlog)
+})
+
 router.delete('/:id', userExtractor, async (request, response) => {
   const blog = await Blog.findById(request.params.id)
 
