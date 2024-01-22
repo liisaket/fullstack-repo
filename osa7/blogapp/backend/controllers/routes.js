@@ -40,17 +40,12 @@ router.post('/', userExtractor, async (request, response) => {
 router.post('/:id/comments', async (request, response) => {
   const { comment } = request.body
 
-  const user = request.user
-
-  if (!user) {
-    return response.status(401).json({ error: 'operation not permitted' })
-  }
-
   const blog = await Blog.findById(request.params.id)
   blog.comments = blog.comments.concat(comment)
   savedBlog = await blog.save()
+  await Blog.findByIdAndUpdate(request.params.id,  savedBlog, { new: true })
 
-  response.status(201).json(savedBlog)
+  response.json(savedBlog)
 })
 
 router.put('/:id', async (request, response) => {

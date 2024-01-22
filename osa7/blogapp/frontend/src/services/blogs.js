@@ -20,6 +20,11 @@ const update = async (object) => {
   return request.data
 }
 
+const comment = async (object) => {
+  const request = await axios.post(`${baseUrl}/${object.id}/comments`, object)
+  return request.data
+}
+
 const remove = async (id) => {
   const headers = {
     'Authorization': storageService.loadUser() ? `Bearer ${storageService.loadUser().token}` : null
@@ -27,4 +32,4 @@ const remove = async (id) => {
   await axios.delete(`${baseUrl}/${id}`, { headers })
 }
 
-export default { getAll, create, update, remove }
+export default { getAll, create, update, comment, remove }

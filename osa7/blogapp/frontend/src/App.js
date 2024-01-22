@@ -46,7 +46,6 @@ const App = () => {
   const blogs = useSelector(state => {
     return state.blogs
   })
-  // <Route path="/blogs/:id" element={<Blog />} />
 
   return (
     <Router>

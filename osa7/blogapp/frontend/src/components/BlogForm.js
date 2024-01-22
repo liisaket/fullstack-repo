@@ -19,7 +19,7 @@ const BlogForm = () => {
         title: title.value,
         author: author.value,
         url: url.value,
-        votes: 0
+        likes: 0
       }))
       dispatch(setNotification(`added a new blog ${title.value} by ${author.value}`))
       resetFields(event)

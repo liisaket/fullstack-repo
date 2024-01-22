@@ -19,12 +19,6 @@ const BlogList = () => {
 
   const byLikes = (blog1, blog2) => blog2.likes - blog1.likes
 
-  /*{[...blogs].sort(byLikes).map(blog =>
-    <Blog key={blog.id} blogs={blogs}
-      like={() => like(blog)} remove={() => remove(blog)}
-      canRemove={user && blog.user.username===user.username}/>
-  )}*/
-
   return (
     <div>
       {user && <div>
