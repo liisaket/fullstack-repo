@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notifReducer'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
-import CommentForm from './CommentForm'
+import Comment from './Comment'
 import Comments from './Comments'
 
 const Blog = ({ blogs }) => {
@@ -24,11 +24,11 @@ const Blog = ({ blogs }) => {
       dispatch(likeBlog(blog))
       dispatch(setNotification(`a like for the blog '${blog.title}' by '${blog.author}'`))
     } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'error'))
+      dispatch(setNotification(`${exception}`, 'danger'))
     }
   }
 
-  const removeB = async (blog) => {
+  const remove = async (blog) => {
     try {
       if (window.confirm(`sure you want to remove blog ${blog.title} by ${blog.author}?`)) {
         dispatch(removeBlog(blog))
@@ -36,7 +36,7 @@ const Blog = ({ blogs }) => {
         navigate('/')
       }
     } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'error'))
+      dispatch(setNotification(`${exception}`, 'danger'))
     }
   }
 
@@ -47,10 +47,10 @@ const Blog = ({ blogs }) => {
         <div> <a href={blog.url}>{blog.url}</a> </div>
         <div>{blog.likes} likes <button onClick={() => like(blog)}>like</button></div>
         <div>added by {blog.user && blog.user.name}</div>
-        {canRemove&&<button onClick={() => removeB(blog)}>delete</button>}
+        {canRemove&&<button onClick={() => remove(blog)}>delete</button>}
       </div>
       <h3>comments</h3>
-      <CommentForm blog={blog} />
+      <Comment blog={blog} />
       <Comments blog={blog} />
     </div>
   )}

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = { content: null, color: null }
+const initialState = { content: null, type: null }
 
 const notifSlice = createSlice({
   name: 'notification',
@@ -15,9 +15,9 @@ const notifSlice = createSlice({
   },
 })
 
-export const setNotification = ( content, color='info' ) => {
+export const setNotification = ( content, type='success' ) => {
   return async dispatch => {
-    dispatch(set({ content, color }))
+    dispatch(set({ content, type }))
     setTimeout(() => {
       dispatch(clear())
     }, 5000)

@@ -1,4 +1,3 @@
-import { useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { useField } from '../hooks'
 import { commentBlog } from '../reducers/blogReducer'
@@ -15,7 +14,7 @@ const CommentForm = ({ blog }) => {
       dispatch(setNotification('added a new comment'))
       comment.onReset()
     } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'error'))
+      dispatch(setNotification(`${exception}`, 'danger'))
     }
   }
 

@@ -1,6 +1,19 @@
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { Table } from 'react-bootstrap'
 
 const Users = ({ users }) => {
+  const user = useSelector(state => {
+    return state.user})
+
+  if (!user) {
+    return (
+      <div>
+        <p>log in first</p>
+      </div>
+    )
+  }
+
   const tdstyle = {
     paddingRight: 8,
     borderWidth: 1,
@@ -9,10 +22,10 @@ const Users = ({ users }) => {
   return (
     <div>
       <h2>users</h2>
-      <table>
+      <Table striped>
         <thead>
           <tr>
-            <th>{null}</th>
+            <th>&nbsp;</th>
             <th>blogs created</th>
           </tr>
         </thead>
@@ -27,7 +40,7 @@ const Users = ({ users }) => {
             )
           })}
         </tbody>
-      </table>
+      </Table>
     </div>
   )
 }

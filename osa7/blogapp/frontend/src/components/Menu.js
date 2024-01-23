@@ -17,19 +17,16 @@ const Menu = () => {
     paddingRight: 5
   }
 
-  const menu = {
-    border: 'solid lightgrey',
-    backgroundColor: 'lightgrey'
-  }
-
   return (
     <div>
-      {user && <div style={menu}>
-        <Link style={padding} to="/">blogs</Link>
-        <Link style={padding} to="/users">users</Link>
-        {user.name} logged in&nbsp;
-        <button onClick={logoutUser}>logout</button>
-      </div>}
+      <Link style={padding} to="/">home</Link>
+      <Link style={padding} to="/blogs">blogs</Link>
+      <Link style={padding} to="/users">users</Link>
+      {user ? <span>
+        <Link style={padding} onClick={logoutUser}>logout</Link>
+        <i>{user.username} logged in&nbsp;</i></span>
+        :<Link style={padding} to="/login">login</Link>
+      }
     </div>
   )
 }

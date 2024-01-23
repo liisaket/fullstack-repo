@@ -25,7 +25,7 @@ const BlogForm = () => {
       resetFields(event)
       blogFormRef.current.toggleVisibility()
     } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'error'))
+      dispatch(setNotification(`${exception}`, 'danger'))
     }
   }
 

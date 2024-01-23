@@ -2,15 +2,15 @@ import { useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notifReducer'
 import { removeComment } from '../reducers/blogReducer'
 
-const BlogList = ({ blog }) => {
+const Comments = ({ blog }) => {
   const dispatch = useDispatch()
 
-  const removeC = async (blog, comment, index) => {
+  const remove = async (blog, comment, index) => {
     try {
       dispatch(removeComment({ id: blog.id, index: index }))
-      dispatch(setNotification(`removed comment ${comment}`))
+      dispatch(setNotification(`removed comment '${comment}'`))
     } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'error'))
+      dispatch(setNotification(`${exception}`, 'danger'))
     }
   }
 
@@ -21,7 +21,7 @@ const BlogList = ({ blog }) => {
           return (
             <div key={index}>
               <li>{comment}&nbsp;
-                <button onClick={() => removeC(blog, comment, index)}>delete</button>
+                <button onClick={() => remove(blog, comment, index)}>delete</button>
               </li>
             </div>
           )}
@@ -30,4 +30,4 @@ const BlogList = ({ blog }) => {
     </div>
   )}
 
-export default BlogList
+export default Comments
