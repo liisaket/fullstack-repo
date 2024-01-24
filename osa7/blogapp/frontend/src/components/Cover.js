@@ -1,7 +1,7 @@
 const Cover = () => {
   return (
     <div>
-      welcome to the blog app!
+      welcome to the blog app by liisa!
     </div>
   )
 }

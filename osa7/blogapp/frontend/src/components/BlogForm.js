@@ -1,18 +1,22 @@
-import { useRef } from 'react'
+import { Form, Button } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { useField } from '../hooks'
 import { createBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notifReducer'
-import Togglable from './Togglable'
 
-const BlogForm = () => {
+const BlogForm = ({ user }) => {
   const dispatch = useDispatch()
-  const blogFormRef = useRef()
+  const navigate = useNavigate()
   const title = useField('text')
   const author = useField('text')
   const url = useField('text')
 
-  const onCreate = (event) => {
+  if (!user) {
+    return null
+  }
+
+  const handleSubmit = (event) => {
     event.preventDefault()
     try {
       dispatch(createBlog({
@@ -23,7 +27,7 @@ const BlogForm = () => {
       }))
       dispatch(setNotification(`added a new blog ${title.value} by ${author.value}`))
       resetFields(event)
-      blogFormRef.current.toggleVisibility()
+      navigate('/blogs')
     } catch (exception) {
       dispatch(setNotification(`${exception}`, 'danger'))
     }
@@ -38,26 +42,28 @@ const BlogForm = () => {
 
   return (
     <div>
-      <Togglable buttonLabel='create new blog' ref={blogFormRef}>
-        <h2>Create a new blog</h2>
-        <form onSubmit={onCreate}>
-          <div>
-            title:
-            <input {...title}/>
-          </div>
-          <div>
-            author:
-            <input {...author}/>
-          </div>
-          <div>
-            url:
-            <input {...url}/>
-          </div>
-          <button id='create-button' type="submit">create</button>
-          <button onClick={resetFields}>reset</button>
-        </form>
-      </Togglable>
-      <br></br>
+      <h3>add a new blog</h3>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group>
+          <Form.Label>title:</Form.Label>
+          <Form.Control input {...title}/>
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>author:</Form.Label>
+          <Form.Control input {...author}/>
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>url:</Form.Label>
+          <Form.Control input {...url}/>
+        </Form.Group>
+        <br></br>
+        <Button variant="primary" type="submit">
+            add
+        </Button>&nbsp;
+        <Button onClick={resetFields}>
+            reset
+        </Button>
+      </Form>
     </div>
   )}
 

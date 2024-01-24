@@ -13,10 +13,12 @@ import userService from './services/users'
 
 import Blog from './components/Blog'
 import Blogs from './components/Blogs'
+import BlogForm from './components/BlogForm'
 import Cover from './components/Cover'
 import Login from './components/Login'
 import Menu from './components/Menu'
 import Notification from './components/Notification'
+import Register from './components/Register'
 import User from './components/User'
 import Users from './components/Users'
 
@@ -50,17 +52,16 @@ const App = () => {
     <Router>
       <div className='container'>
         <Notification />
-        <Menu />
-        <h2>blog app</h2>
+        <Menu /><br></br>
+        <h2>blog app</h2><br></br>
         <Routes>
           <Route path="/" element={<Cover />}/>
           <Route path="/login" element={<Login />}/>
-          <Route path="/blogs" element={
-            <div>
-              <Blogs />
-            </div>}/>
-          <Route path="/users" element={<Users users={users}/>} />
-          <Route path="/users/:id" element={<User users={users} />} />
+          <Route path="/register" element={<Register />}/>
+          <Route path="/blogs" element={<Blogs user={user}/>}/>
+          <Route path="/create" element={<BlogForm user={user}/>}/>
+          <Route path="/users" element={<Users user={user} users={users}/>} />
+          <Route path="/users/:id" element={<User online={user} users={users} />} />
           <Route path="/blogs/:id" element={<Blog blogs={blogs} />} />
         </Routes>
       </div>

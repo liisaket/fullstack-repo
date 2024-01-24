@@ -8,16 +8,6 @@ const Notification = () => {
     return
   }
 
-  const style = {
-    color: notification.color==='error' ? 'red' : 'green',
-    background: 'lightgrey',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10
-  }
-
   return (
     <Alert variant={notification.type}>
       {notification.content}

@@ -26,6 +26,7 @@ const CommentForm = ({ blog }) => {
           <button id='comment-button' type="add">add a comment</button>
         </div>
       </form>
+      <br></br>
     </div>
   )}
 

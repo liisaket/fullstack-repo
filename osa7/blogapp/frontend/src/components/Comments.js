@@ -1,4 +1,5 @@
 import { useDispatch } from 'react-redux'
+import { Table } from 'react-bootstrap'
 import { setNotification } from '../reducers/notifReducer'
 import { removeComment } from '../reducers/blogReducer'
 
@@ -16,17 +17,19 @@ const Comments = ({ blog }) => {
 
   return (
     <div>
-      <ul>
-        {blog.comments.map((comment, index) => {
-          return (
-            <div key={index}>
-              <li>{comment}&nbsp;
-                <button onClick={() => remove(blog, comment, index)}>delete</button>
-              </li>
-            </div>
+      <Table striped>
+        <tbody>
+          {blog.comments.map((comment, index) => {
+            return (
+              <tr key={index}>
+                <td>&quot;{comment}&quot;&nbsp;
+                  <button onClick={() => remove(blog, comment, index)}>delete</button>
+                </td>
+              </tr>
+            )}
           )}
-        )}
-      </ul>
+        </tbody>
+      </Table>
     </div>
   )}
 

@@ -1,30 +1,31 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Table } from 'react-bootstrap'
-import BlogForm from './BlogForm'
 
-const BlogList = () => {
+const Blogs = ({ user }) => {
+  const navigate = useNavigate()
   const blogs = useSelector(state => {
     return state.blogs
   })
 
-  const user = useSelector(state => {
-    return state.user})
-
   if (!user) {
-    return (
-      <div>
-        <p>log in first</p>
-      </div>
-    )
+    return null
   }
 
   const byLikes = (blog1, blog2) => blog2.likes - blog1.likes
 
   return (
     <div>
-      <BlogForm />
+      <div>
+        <button onClick={() => navigate('/create')}>add a new blog</button>
+      </div>
+      <br></br>
       <Table striped>
+        <thead>
+          <tr>
+            <th>blogs</th>
+          </tr>
+        </thead>
         <tbody>
           {[...blogs].sort(byLikes).map(blog => {
             return (
@@ -40,4 +41,4 @@ const BlogList = () => {
     </div>
   )}
 
-export default BlogList
+export default Blogs

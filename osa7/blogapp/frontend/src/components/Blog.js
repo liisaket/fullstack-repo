@@ -1,13 +1,13 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
+import { Table } from 'react-bootstrap'
 import { setNotification } from '../reducers/notifReducer'
-import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import { likeBlog } from '../reducers/blogReducer'
 import Comment from './Comment'
 import Comments from './Comments'
 
 const Blog = ({ blogs }) => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const id = useParams().id
   const blog = blogs.find(blog => blog.id === id)
   const user = useSelector(state => {
@@ -16,8 +16,6 @@ const Blog = ({ blogs }) => {
   if (!blog || !user) {
     return null
   }
-
-  const canRemove = user && blog.user.username===user.username
 
   const like = async (blog) => {
     try {
@@ -28,27 +26,36 @@ const Blog = ({ blogs }) => {
     }
   }
 
-  const remove = async (blog) => {
-    try {
-      if (window.confirm(`sure you want to remove blog ${blog.title} by ${blog.author}?`)) {
-        dispatch(removeBlog(blog))
-        dispatch(setNotification(`removed blog '${blog.title}' by ${blog.author}`))
-        navigate('/')
-      }
-    } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'danger'))
-    }
-  }
-
   return (
     <div>
-      <h2>{blog.title} by {blog.author}</h2>
-      <div>
-        <div> <a href={blog.url}>{blog.url}</a> </div>
-        <div>{blog.likes} likes <button onClick={() => like(blog)}>like</button></div>
-        <div>added by {blog.user && blog.user.name}</div>
-        {canRemove&&<button onClick={() => remove(blog)}>delete</button>}
-      </div>
+      <h3>{blog.title}</h3>
+      <Table striped>
+        <tbody>
+          <tr>
+            <th>title</th>
+            <td>{blog.title}</td>
+          </tr>
+          <tr>
+            <th>author</th>
+            <td>{blog.author}</td>
+          </tr>
+          <tr>
+            <th>URL</th>
+            <td> <a href={blog.url}>{blog.url}</a> </td>
+          </tr>
+          <tr>
+            <th>likes</th>
+            <td>{blog.likes}&nbsp;
+              <button onClick={() => like(blog)}>like</button>
+            </td>
+          </tr>
+          <tr>
+            <th>added by</th>
+            <td>{blog.user.username}
+            </td>
+          </tr>
+        </tbody>
+      </Table>
       <h3>comments</h3>
       <Comment blog={blog} />
       <Comments blog={blog} />

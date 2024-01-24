@@ -1,17 +1,9 @@
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Table } from 'react-bootstrap'
 
-const Users = ({ users }) => {
-  const user = useSelector(state => {
-    return state.user})
-
+const Users = ({ user, users }) => {
   if (!user) {
-    return (
-      <div>
-        <p>log in first</p>
-      </div>
-    )
+    return null
   }
 
   const tdstyle = {
@@ -34,7 +26,7 @@ const Users = ({ users }) => {
             return (
               <tr key={user.id}>
                 <td style={tdstyle}>
-                  <Link to={`/users/${user.id}`}>{user.name}</Link></td>
+                  <Link to={`/users/${user.id}`}>{user.username}</Link></td>
                 <td style={tdstyle}>{user.blogs.length}</td>
               </tr>
             )
