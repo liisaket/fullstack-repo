@@ -9,13 +9,12 @@ const CommentForm = ({ blog }) => {
 
   const onCreate = (event) => {
     event.preventDefault()
-    try {
-      dispatch(commentBlog({ ...blog, comment: comment.value }))
-      dispatch(setNotification('added a new comment'))
-      comment.onReset()
-    } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'danger'))
-    }
+    dispatch(commentBlog({ ...blog, comment: comment.value }))
+      .then(result => {
+        if (result) {
+          comment.onReset()
+        }
+      })
   }
 
   return (

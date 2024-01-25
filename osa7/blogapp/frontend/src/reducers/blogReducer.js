@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import blogService from '../services/blogs'
+import { setNotification } from './notifReducer'
 
 const blogSlice = createSlice({
   name: 'blogs',
@@ -31,9 +32,16 @@ export const initializeBlogs = () => {
 
 export const createBlog = (object) => {
   return async dispatch => {
-    const blog = await blogService.create(object)
-    dispatch(add(blog))
-    dispatch(initializeBlogs())
+    try {
+      const blog = await blogService.create(object)
+      dispatch(add(blog))
+      dispatch(initializeBlogs())
+      dispatch(setNotification(`added a new blog ${object.title} by ${object.author}`))
+      return true
+    } catch (exception) {
+      dispatch(setNotification(`${exception.response.data.error}`, 'danger'))
+      return false
+    }
   }
 }
 
@@ -47,8 +55,15 @@ export const likeBlog = (object) => {
 
 export const commentBlog = (object) => {
   return async dispatch => {
-    const blog = await blogService.comment(object)
-    dispatch(update({ ...blog, user: object.user }))
+    try {
+      const blog = await blogService.comment(object)
+      dispatch(update({ ...blog, user: object.user }))
+      dispatch(setNotification(`added a new comment "${object.comment}"`))
+      return true
+    } catch (exception) {
+      dispatch(setNotification(`${exception.response.data.error}`, 'danger'))
+      return false
+    }
   }
 }
 
@@ -61,8 +76,14 @@ export const removeComment = (object) => {
 
 export const removeBlog = (object) => {
   return async dispatch => {
-    await blogService.remove(object.id)
-    dispatch(remove(object))
+    try {
+      await blogService.remove(object.id)
+      dispatch(remove(object))
+      dispatch(setNotification(`removed blog '${object.title}' by ${object.author}`))
+    } catch (exception) {
+      dispatch(setNotification(`${exception.response.data.error}`, 'danger'))
+      return false
+    }
   }
 }
 

@@ -11,18 +11,27 @@ usersRouter.get('/', async (request, response) => {
 
 usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body
+  const taken = await User.findOne({ username })
 
   if (password.length < 3 && username.length < 3) {
     return response.status(400).json({
-      error: 'User validation failed: `username` and `password are shorther than the minimum allowed length (3).'
+      error: 'username and password are shorter than the minimum allowed length (3).'
     })
   } else if (password.length < 3) {
     return response.status(400).json({
-      error: 'User validation failed: `password` is shorter than the minimum allowed length (3).'
+      error: 'password is shorter than the minimum allowed length (3).'
     })
   } else if (username.length < 3) {
     return response.status(400).json({
-      error: 'User validation failed: `username` is shorter than the minimum allowed length (3).'
+      error: 'username is shorter than the minimum allowed length (3).'
+    })
+  } else if (name.length < 3) {
+    return response.status(400).json({
+      error: 'name is shorter than the minimum allowed length (3).'
+    })
+  } else if (taken) {
+    return response.status(400).json({
+      error: `username "${username}" is already taken.`
     })
   }
 

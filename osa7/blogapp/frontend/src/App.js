@@ -60,8 +60,8 @@ const App = () => {
           <Route path="/register" element={<Register />}/>
           <Route path="/blogs" element={<Blogs user={user}/>}/>
           <Route path="/create" element={<BlogForm user={user}/>}/>
-          <Route path="/users" element={<Users user={user} users={users}/>} />
-          <Route path="/users/:id" element={<User online={user} users={users} />} />
+          <Route path="/users" element={<Users user={user} />} />
+          <Route path="/users/:id" element={<User online={user} />} />
           <Route path="/blogs/:id" element={<Blog blogs={blogs} />} />
         </Routes>
       </div>

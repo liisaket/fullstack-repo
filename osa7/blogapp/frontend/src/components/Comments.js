@@ -7,11 +7,9 @@ const Comments = ({ blog }) => {
   const dispatch = useDispatch()
 
   const remove = async (blog, comment, index) => {
-    try {
+    if (window.confirm(`sure you want to remove comment "${comment}"?`)) {
       dispatch(removeComment({ id: blog.id, index: index }))
       dispatch(setNotification(`removed comment '${comment}'`))
-    } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'danger'))
     }
   }
 

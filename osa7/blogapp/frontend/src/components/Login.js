@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../reducers/userReducer'
-import { setNotification } from '../reducers/notifReducer'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
@@ -16,13 +15,11 @@ const LoginForm = () => {
 
   const loginUser = async (event) => {
     event.preventDefault()
-    try {
-      dispatch(login(username, password))
-      dispatch(setNotification(`welcome ${username}`))
-      navigate('/')
-    } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'danger'))
-    }
+    dispatch(login(username, password)).then(result => {
+      if (result) {
+        navigate('/')
+      }
+    })
   }
 
   return (
@@ -45,6 +42,7 @@ const LoginForm = () => {
               onChange={({ target }) => setPassword(target.value)}
             />
           </Form.Group>
+          <br></br>
           <Button variant="primary" type="submit">
             login
           </Button>

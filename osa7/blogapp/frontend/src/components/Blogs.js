@@ -24,6 +24,9 @@ const Blogs = ({ user }) => {
         <thead>
           <tr>
             <th>blogs</th>
+            <th>author</th>
+            <th>likes</th>
+            <th>added by</th>
           </tr>
         </thead>
         <tbody>
@@ -33,6 +36,9 @@ const Blogs = ({ user }) => {
                 <td>
                   <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
                 </td>
+                <td>{blog.author}</td>
+                <td>{blog.likes}</td>
+                <td>{blog.user.username}</td>
               </tr>
             )}
           )}

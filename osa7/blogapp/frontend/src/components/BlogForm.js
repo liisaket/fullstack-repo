@@ -18,19 +18,17 @@ const BlogForm = ({ user }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    try {
-      dispatch(createBlog({
-        title: title.value,
-        author: author.value,
-        url: url.value,
-        likes: 0
-      }))
-      dispatch(setNotification(`added a new blog ${title.value} by ${author.value}`))
-      resetFields(event)
-      navigate('/blogs')
-    } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'danger'))
-    }
+    dispatch(createBlog({
+      title: title.value,
+      author: author.value,
+      url: url.value,
+      likes: 0
+    })).then(result => {
+      if (result) {
+        resetFields(event)
+        navigate('/blogs')
+      }
+    })
   }
 
   const resetFields = (event) => {
@@ -46,15 +44,15 @@ const BlogForm = ({ user }) => {
       <Form onSubmit={handleSubmit}>
         <Form.Group>
           <Form.Label>title:</Form.Label>
-          <Form.Control input {...title}/>
+          <Form.Control {...title}/>
         </Form.Group>
         <Form.Group>
           <Form.Label>author:</Form.Label>
-          <Form.Control input {...author}/>
+          <Form.Control {...author}/>
         </Form.Group>
         <Form.Group>
           <Form.Label>url:</Form.Label>
-          <Form.Control input {...url}/>
+          <Form.Control {...url}/>
         </Form.Group>
         <br></br>
         <Button variant="primary" type="submit">

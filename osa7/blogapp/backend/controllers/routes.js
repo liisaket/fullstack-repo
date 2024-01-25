@@ -23,6 +23,12 @@ router.post('/', userExtractor, async (request, response) => {
 
   if (!user) {
     return response.status(401).json({ error: 'operation not permitted' })
+  } else if (title.length < 3) {
+    return response.status(400).json({ error: 'title is shorter than the minimum allowed length (3).' })
+  } else if (author.length < 3) {
+    return response.status(400).json({ error: 'author is shorter than the minimum allowed length (3).' })
+  } else if (url.length < 3) {
+    return response.status(400).json({ error: 'url is shorter than the minimum allowed length (3).' })
   }
 
   blog.user = user._id
@@ -39,6 +45,10 @@ router.post('/', userExtractor, async (request, response) => {
 
 router.post('/:id/comments', async (request, response) => {
   const { comment } = request.body
+
+  if (comment.length < 2) {
+    return response.status(400).json({ error: 'comment is shorter than the minimum allowed length (2).' })
+  }
 
   const blog = await Blog.findById(request.params.id)
 

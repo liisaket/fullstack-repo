@@ -25,13 +25,8 @@ const User = ({ online }) => {
   }
 
   const remove = async (blog) => {
-    try {
-      if (window.confirm(`sure you want to remove blog ${blog.title} by ${blog.author}?`)) {
-        dispatch(removeBlog(blog))
-        dispatch(setNotification(`removed blog '${blog.title}' by ${blog.author}`))
-      }
-    } catch (exception) {
-      dispatch(setNotification(`${exception}`, 'danger'))
+    if (window.confirm(`sure you want to remove blog ${blog.title} by ${blog.author}?`)) {
+      dispatch(removeBlog(blog))
     }
   }
 
