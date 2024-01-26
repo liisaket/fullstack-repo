@@ -20,7 +20,7 @@ const Blog = ({ blogs }) => {
   const like = async (blog) => {
     try {
       dispatch(likeBlog(blog))
-      dispatch(setNotification(`a like for the blog '${blog.title}' by '${blog.author}'`))
+      dispatch(setNotification(`a like for the blog "${blog.title}" by ${blog.author}`))
     } catch (exception) {
       dispatch(setNotification(`${exception}`, 'danger'))
     }
