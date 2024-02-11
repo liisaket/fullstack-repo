@@ -4,15 +4,12 @@ import { Table } from 'react-bootstrap'
 
 const Blogs = ({ user }) => {
   const navigate = useNavigate()
-  const blogs = useSelector(state => {
-    return state.blogs
-  })
+  const byLikes = (blog1, blog2) => blog2.likes - blog1.likes
+  const blogs = useSelector(({ blogs }) => [...blogs].sort(byLikes))
 
   if (!user) {
     return null
   }
-
-  const byLikes = (blog1, blog2) => blog2.likes - blog1.likes
 
   return (
     <div>
