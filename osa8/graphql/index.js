@@ -1,5 +1,7 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
+const { UniqueDirectiveNamesRule, executeSync } = require('graphql')
+const { v1: uuid } = require('uuid')
 
 let authors = [
   {
@@ -104,7 +106,7 @@ const typeDefs = `
 
   type Author {
     name: String!
-    born: Int!
+    born: Int
     id: ID!
     bookCount: Int!
   }
@@ -114,6 +116,19 @@ const typeDefs = `
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+  }
+
+  type Mutation {
+    addBook(
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String!]!
+    ): Book
+    editAuthor(
+      name: String!
+      setBornTo: Int
+    ): Author
   }
 `
 
@@ -142,6 +157,33 @@ const resolvers = {
     published: (root) => root.published,
     genres: (root) => root.genres,
     id: (root) => root.id
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const existing_book = books.find(b => b.title === args.title)
+      const existing_author = authors.find(a => a.name === args.author)
+      if (existing_book) {
+        return null
+      }
+      if (!existing_author) {
+        authors = authors.concat({ 
+          name: args.author,
+          born: args.born ? args.born : null,
+          id: uuid() })
+      }
+      const book = { ...args, id: uuid() }
+      books = books.concat(book)
+      return book
+    },
+    editAuthor: (root, args) => {
+      const existing_author = authors.find(a => a.name === args.name)
+      if (existing_author) {
+        const author = { ...existing_author, born: args.setBornTo }
+        authors = authors.map(a => a.name === args.name ? author : a)
+        return author
+      }
+      return null
+    }
   }
 }
 
