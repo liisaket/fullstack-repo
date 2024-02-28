@@ -54,7 +54,7 @@ const Authors = (props) => {
           {result.data.allAuthors.map((a) => {
             if (a.born === null) {
               return (
-                <option value={a.name}>{a.name}</option>
+                <option key={a.id} value={a.name}>{a.name}</option>
           )}})}
         </select>
         <div>

@@ -95,13 +95,32 @@ let books = [
   },
 ]
 
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
+const Author = require('./models/author')
+const Book = require('./models/book')
+
+require('dotenv').config()
+
+const MONGODB_URI = process.env.MONGODB_URI
+
+console.log('connecting to', MONGODB_URI)
+
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
+
 const typeDefs = `
   type Book {
     title: String!
     published: Int!
-    author: String!
-    id: ID!
+    author: Author!
     genres: [String!]!
+    id: ID!
   }
 
   type Author {
@@ -127,26 +146,26 @@ const typeDefs = `
     ): Book
     editAuthor(
       name: String!
-      setBornTo: Int
+      setBornTo: Int!
     ): Author
   }
 `
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
+    bookCount: async () => Book.collection.countDocuments(),
     authorCount: () => authors.length,
-    allBooks: (root, args) => {
+    allBooks: async (root, args) => {/*
       if (args.author && args.genre) {
         return books.filter(b => b.author === args.author && b.genres.includes(args.genre))
       } else if (args.genre) {
         return books.filter(b => b.genres.includes(args.genre))
       } else if (args.author) {
         return books.filter(b => b.author === args.author)
-      } else {
-        return books
-      }},
-    allAuthors: () => authors
+      } else {*/
+        return Book.find({})
+      },
+    allAuthors: async () => { return Author.find({}) }
   },
   Author: {
     bookCount: (root) => books.filter(b => b.author === root.name).length
@@ -159,7 +178,24 @@ const resolvers = {
     id: (root) => root.id
   },
   Mutation: {
-    addBook: (root, args) => {
+    addBook: async (root, args) => {
+      let author;
+
+      const existing_author = await Author.findOne({ name: args.author })
+      const existing_book = await Book.findOne({ title: args.title })
+
+      if (existing_book) {
+        return null
+      }
+
+      if (!existing_author) {
+        author = new Author({ name: args.author })
+        await author.save()
+      }
+      
+      const book = new Book({ ...args, author: existing_author || author })
+      return book.save()
+      /*
       const existing_book = books.find(b => b.title === args.title)
       const existing_author = authors.find(a => a.name === args.author)
       if (existing_book) {
@@ -173,16 +209,20 @@ const resolvers = {
       }
       const book = { ...args, id: uuid() }
       books = books.concat(book)
-      return book
+      return book*/
     },
-    editAuthor: (root, args) => {
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
+      author.born = args.setBornTo
+      return author.save()
+      /*
       const existing_author = authors.find(a => a.name === args.name)
       if (existing_author) {
         const author = { ...existing_author, born: args.setBornTo }
         authors = authors.map(a => a.name === args.name ? author : a)
         return author
       }
-      return null
+      return null*/
     }
   }
 }
