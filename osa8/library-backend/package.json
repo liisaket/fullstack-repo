@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
@@ -15,5 +16,9 @@
     "mongoose": "^8.2.0",
     "mongoose-unique-validator": "^5.0.0",
     "nodemon": "^3.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.33.2"
   }
 }
