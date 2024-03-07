@@ -8,6 +8,16 @@ export const LOGIN = gql`
   }
 `
 
+export const USER = gql`
+  query user {
+    me {
+      username
+      favoriteGenre
+      id
+    }
+  }
+`
+
 export const ALL_AUTHORS = gql`
   query {
     allAuthors {
@@ -20,8 +30,8 @@ export const ALL_AUTHORS = gql`
 `
 
 export const ALL_BOOKS = gql`
-  query {
-    allBooks {
+  query Books($author: String, $genre: String) {
+    allBooks(author: $author, genre: $genre) {
       title
       author {
         name

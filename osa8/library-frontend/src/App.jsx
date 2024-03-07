@@ -5,6 +5,7 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/Login'
 import Notify from './components/Notify'
+import Recommend from './components/Recommend'
 import { ALL_BOOKS } from './queries'
 
 const App = () => {
@@ -44,6 +45,7 @@ const App = () => {
           <button onClick={() => setPage('login')}>login</button></span>
           : <span>
             <button onClick={() => setPage('add')}>add book</button>
+            <button onClick={() => setPage('recommend')}>recommend</button>
             <button onClick={logout}>logout</button>
           </span>
         }
@@ -56,6 +58,8 @@ const App = () => {
       <NewBook show={page === 'add'} />
 
       <LoginForm show={page === 'login'} setError={notify} setToken={setToken} />
+
+      <Recommend show={page === 'recommend'} />
 
     </div>
   )
