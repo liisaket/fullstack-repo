@@ -22,6 +22,10 @@ const App = () => {
     return <div>loading...</div>
   }
 
+  if (!books) {
+    return
+  }
+
   const notify = (message) => {
     setErrorMessage(message)
     setTimeout(() => {
@@ -55,7 +59,7 @@ const App = () => {
 
       <Books show={page === 'books'} books={books.data.allBooks} />
 
-      <NewBook show={page === 'add'} />
+      <NewBook show={page === 'add'} setError={notify}/>
 
       <LoginForm show={page === 'login'} setError={notify} setToken={setToken} />
 
