@@ -1,12 +1,28 @@
 import { useState } from 'react'
-import { useApolloClient, useQuery } from '@apollo/client'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/Login'
 import Notify from './components/Notify'
 import Recommend from './components/Recommend'
-import { ALL_BOOKS } from './queries'
+import { ALL_BOOKS, BOOK_ADDED } from './queries'
+
+export const updateCache = (cache, query, addedBook) => {
+  const uniqByTitle = (a) => {
+    let seen = new Set()
+    return a.filter((item) => {
+      let k = item.title
+      return seen.has(k) ? false : seen.add(k)
+    })
+  }
+
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqByTitle(allBooks.concat(addedBook)),
+    }
+  })
+}
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -14,9 +30,14 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const client = useApolloClient()
 
-  const books = useQuery(ALL_BOOKS, {
-    pollInterval: 2000
-  })
+  const books = useQuery(ALL_BOOKS)
+  
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const addedBook = data.data.bookAdded
+      notify(`${addedBook.title} added`)
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+  }})
 
   if (books.loading)  {
     return <div>loading...</div>
@@ -39,6 +60,8 @@ const App = () => {
     client.resetStore()
   }
 
+
+
   return (
     <div>
       <div>
@@ -55,11 +78,11 @@ const App = () => {
         }
       </div>
 
-      <Authors show={page === 'authors'} token={token} />
+      <Authors show={page === 'authors'} token={token} setError={notify} />
 
       <Books show={page === 'books'} books={books.data.allBooks} />
 
-      <NewBook show={page === 'add'} setError={notify}/>
+      <NewBook show={page === 'add'} setError={notify} />
 
       <LoginForm show={page === 'login'} setError={notify} setToken={setToken} />
 

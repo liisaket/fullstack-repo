@@ -7,7 +7,7 @@ const Recommend = (props) => {
   const favGenre = user.data?.me?.favoriteGenre || null
   const genrebooks = useQuery(ALL_BOOKS, { variables: { genre: favGenre }})
 
-  if (!props.show || !user) {
+  if (!props.show || !user.data.me) {
     return null
   }
 
