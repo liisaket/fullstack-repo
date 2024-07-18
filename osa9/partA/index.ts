@@ -1,4 +1,5 @@
 import calculateBmi from "./bmiCalculator";
+import calculateExercises from "./exerciseCalculator";
 
 const express = require('express');
 const app = express();
@@ -21,6 +22,26 @@ app.get('/bmi', (req: any, res: any) => {
     res.json({
       error: "malformatted parameters"
     });
+  }
+});
+
+app.use(express.json())
+
+app.post('/exercises', (req: any, res: any) => {
+  const data = req.body;
+  const daEx = data["daily_exercises"]
+  const target = data["target"]
+  if (!daEx || !target) {
+    res.json({
+      error: "parameters missing"
+    })
+  } else if (typeof target != "number" || typeof daEx != "object" || daEx.every((arg: any) => isNaN(arg)) || daEx.length == 0) {
+    res.json({
+      error: "malformatted parameters"
+    })
+  } else {
+    const result = calculateExercises(data["daily_exercises"], data["target"]);
+    res.json(result)
   }
 });
 

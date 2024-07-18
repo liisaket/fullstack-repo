@@ -1,9 +1,9 @@
-const parseArguments = (target: number, args: number[]) => {
+/*const parseArguments = (target: number, args: number[]) => {
   if (args.length < 1) throw new Error('Not enough arguments');
   if (isNaN(Number(target)) || !args.every(arg => !isNaN(Number(arg)))) {
     throw new Error('Provided values were not numbers!');
   }
-};
+};*/
 
 interface Result {
   periodLength: number;
@@ -44,7 +44,9 @@ const calculateExercises = (exercises: number[], target: number) => {
   return result
 }
 
+export default calculateExercises;
 
+/*
 const args = process.argv.slice(2);
 const target = Number(args[0]);
 const exercises = args.slice(1).map(arg => Number(arg));
@@ -59,3 +61,4 @@ try {
   }
   console.log(errorMessage);
 }
+*/
