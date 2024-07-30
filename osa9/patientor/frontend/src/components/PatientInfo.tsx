@@ -1,7 +1,9 @@
 import { useParams } from "react-router-dom";
-import { Patient } from "../types";
+import { Gender, Patient } from "../types";
 import patientService from "../services/patients";
 import { useEffect, useState } from "react";
+import Female from "@mui/icons-material/Female";
+import Male from "@mui/icons-material/Male";
 
 const PatientInfo = () => {
   const [patient, setPatient] = useState<Patient | undefined>();
@@ -23,7 +25,11 @@ const PatientInfo = () => {
     <div>
       {patient && (
         <div>
-          <h1>{patient.name}</h1>
+          <h1>
+            {patient.name}{" "}
+            {(patient.gender == Gender.Female && <Female />) ||
+              (patient.gender == Gender.Male && <Male />)}
+          </h1>
           <p>ssh: {patient.ssn}</p>
           <p>occupation: {patient.occupation}</p>
         </div>
