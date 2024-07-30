@@ -1,17 +1,21 @@
 import express from "express";
-import patientService from "../services/patientService";
-import toNewPatient from "../utilities/utils";
+
+import diaryService from "../services/diaryService";
+
+import toNewDiaryEntry from "../utils";
 
 const router = express.Router();
 
 router.get("/", (_req, res) => {
-  res.send(patientService.getNonSensitivePatientData());
+  //res.send(diaryService.getNonSensitiveEntries());
+  res.send(diaryService.getEntries());
 });
 
 router.get("/:id", (req, res) => {
-  const patient = patientService.findById(req.params.id);
-  if (patient) {
-    res.send(patient);
+  const diary = diaryService.findById(Number(req.params.id));
+
+  if (diary) {
+    res.send(diary);
   } else {
     res.sendStatus(404);
   }
@@ -19,9 +23,9 @@ router.get("/:id", (req, res) => {
 
 router.post("/", (req, res) => {
   try {
-    const newPatient = toNewPatient(req.body);
-    const addedPatient = patientService.addPatient(newPatient);
-    res.json(addedPatient);
+    const newDiaryEntry = toNewDiaryEntry(req.body);
+    const addedEntry = diaryService.addDiary(newDiaryEntry);
+    res.json(addedEntry);
   } catch (error: unknown) {
     let errorMessage = "Something went wrong.";
     if (error instanceof Error) {
