@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Gender, Patient } from "../types";
+import { Diagnosis, Entry, Gender, Patient } from "../types";
 import patientService from "../services/patients";
 import { useEffect, useState } from "react";
 import Female from "@mui/icons-material/Female";
@@ -32,6 +32,21 @@ const PatientInfo = () => {
           </h1>
           <p>ssh: {patient.ssn}</p>
           <p>occupation: {patient.occupation}</p>
+          <h2>entries</h2>
+          {Object.values(patient.entries).map((entry: Entry) => (
+            <div key={entry.id}>
+              <p>
+                {entry.date} <i>{entry.description}</i>
+              </p>
+              {entry.diagnosisCodes && entry.diagnosisCodes.length > 0 && (
+                <ul>
+                  {entry.diagnosisCodes.map((code) => (
+                    <li key={code}>{code}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>
