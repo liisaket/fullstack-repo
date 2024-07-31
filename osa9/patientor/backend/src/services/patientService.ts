@@ -6,7 +6,7 @@ import {
   NewPatient,
 } from "../utilities/types";
 
-const patients: Patient[] = patientData;
+const patients: Patient[] = patientData as Patient[];
 
 const getPatients = (): Patient[] => {
   return patients;
