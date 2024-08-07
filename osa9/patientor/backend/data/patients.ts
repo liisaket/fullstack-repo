@@ -20,6 +20,24 @@ const data = [
           criteria: "Thumb has healed.",
         },
       },
+      {
+        id: "d811e67d-80b3-5b90-b090-4535c7cf8fb1",
+        date: "2020-01-02",
+        type: "OccupationalHealthcare",
+        specialist: "MD House",
+        employerName: "HyPD",
+        diagnosisCodes: ["H54.7"],
+        description: "Random visual loss",
+        sickLeave: {
+          startDate: "2019-08-05",
+          endDate: "2019-08-28",
+        },
+      },
+      {
+        id: "d812e67d-80b3-5b90-b090-4535c7cf8fb1",
+        date: "2020-01-02",
+        type: "HealthCheckEntry",
+      },
     ],
   },
   {
