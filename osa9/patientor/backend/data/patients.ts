@@ -36,7 +36,10 @@ const data = [
       {
         id: "d812e67d-80b3-5b90-b090-4535c7cf8fb1",
         date: "2020-01-02",
-        type: "HealthCheckEntry",
+        description: "health check",
+        specialist: "dr house",
+        type: "HealthCheck",
+        healthCheckRating: 1,
       },
     ],
   },

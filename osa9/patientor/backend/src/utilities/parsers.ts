@@ -1,5 +1,5 @@
 import { FinnishSSN } from "finnish-ssn";
-import { Gender } from "./types";
+import { Gender, HealthCheckRating } from "./types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;
@@ -22,9 +22,9 @@ export const parseString = (key: string, string: unknown): string => {
   return string;
 };
 
-export const parseDateOfBirth = (date: unknown): string => {
+export const parseDate = (date: unknown): string => {
   if (!date || !isString(date) || !isDate(date)) {
-    throw new Error("Incorrect or missing date of birth");
+    throw new Error("Incorrect or missing date");
   }
   return date;
 };
@@ -42,7 +42,7 @@ export const parseSSN = (object: unknown): FinnishSSN => {
   }
 
   if ("ssn" in object && "dateOfBirth" in object && "gender" in object) {
-    parseDateOfBirth(object.dateOfBirth);
+    parseDate(object.dateOfBirth);
     const { valid, sex, dateOfBirth } = FinnishSSN.parse(object.ssn as string);
     const SSNDateOfBirth = new Date(dateOfBirth);
 
@@ -67,4 +67,25 @@ export const parseSSN = (object: unknown): FinnishSSN => {
     return object.ssn;
   }
   throw new Error("Incorrect data: some fields are missing");
+};
+
+export const parseCode = (diagnosisCodes: unknown): Array<string> => {
+  if (
+    Array.isArray(diagnosisCodes) &&
+    diagnosisCodes.every((code) => typeof code === "string")
+  ) {
+    return diagnosisCodes;
+  }
+  throw new Error("Incorrect data: some fields are missing");
+};
+
+const isHealthCheckRating = (param: number): param is HealthCheckRating => {
+  return Object.values(HealthCheckRating).includes(param);
+};
+
+export const parseHealthCheck = (rating: unknown): HealthCheckRating => {
+  if (!rating || typeof rating !== "number" || !isHealthCheckRating(rating)) {
+    throw new Error("Incorrect or missing health check rating");
+  }
+  return rating;
 };
