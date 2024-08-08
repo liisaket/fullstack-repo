@@ -1,14 +1,26 @@
 import { useParams } from "react-router-dom";
-import { Gender, Patient } from "../types";
-import patientService from "../services/patients";
+import { EntryFormValues, Gender, Patient } from "../../types";
+import patientService from "../../services/patients";
 import { useEffect, useState } from "react";
 import Female from "@mui/icons-material/Female";
 import Male from "@mui/icons-material/Male";
-import Entries from "./Entries";
+import Entries from "../Entries/Entries";
+import AddEntryModal from "../Entries/AddEntryModal";
+import { Button } from "@mui/material";
 
-const PatientInfo = () => {
+const PatientPage = () => {
   const [patient, setPatient] = useState<Patient | undefined>();
   const { id } = useParams<{ id: string }>();
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -22,6 +34,10 @@ const PatientInfo = () => {
     void fetchPatient();
   }, [id]);
 
+  const submit = async (_values: EntryFormValues) => {
+    return;
+  };
+
   return (
     <div>
       {patient && (
@@ -34,10 +50,19 @@ const PatientInfo = () => {
           <p>ssh: {patient.ssn}</p>
           <p>occupation: {patient.occupation}</p>
           <Entries patient={patient} />
+          <AddEntryModal
+            modalOpen={modalOpen}
+            onSubmit={submit}
+            error={error}
+            onClose={closeModal}
+          />
+          <Button variant="contained" onClick={() => openModal()}>
+            New entry
+          </Button>
         </div>
       )}
     </div>
   );
 };
 
-export default PatientInfo;
+export default PatientPage;

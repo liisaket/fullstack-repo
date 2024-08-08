@@ -1,5 +1,5 @@
-import { Diagnosis, Entry, Patient } from "../types";
-import diagnosesService from "../services/diagnoses";
+import { Diagnosis, Entry, Patient } from "../../types";
+import diagnosesService from "../../services/diagnoses";
 import { useEffect, useState } from "react";
 import LocalHospital from "@mui/icons-material/LocalHospital";
 import Work from "@mui/icons-material/Work";
@@ -75,16 +75,37 @@ const EntryDetails = ({ entry, diagnoses }: EntryDetailsProps): JSX.Element => {
           <p>diagnose by {entry.specialist}</p>
         </div>
       );
+    case "HealthCheck":
+      // health check rating from numbers to strings !
+      return (
+        <div key={entry.id}>
+          <p>
+            <b>{entry.date}</b> <Work />
+          </p>
+          <i>{entry.description}</i>
+          {entry.healthCheckRating && (
+            <div>
+              <p>
+                health check rating: <b>{entry.healthCheckRating}</b>
+              </p>
+            </div>
+          )}
+          {entry.diagnosisCodes && entry.diagnosisCodes.length > 0 && (
+            <ul>
+              {entry.diagnosisCodes.map((code) => {
+                const diagnosis = diagnoses?.find((d) => d.code === code);
+                return (
+                  <li key={code}>
+                    {code} {diagnosis ? diagnosis.name : ""}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      );
     default:
-      if (entry) {
-        return (
-          <div key={entry.id}>
-            <p>Unknown entry type: {entry.type}</p>
-          </div>
-        );
-      } else {
-        throw new Error(`Unhandled entry type`);
-      }
+      return assertNever(entry);
   }
 };
 
@@ -111,7 +132,11 @@ const Entries = ({ patient }: EntryProps): JSX.Element => {
           {Object.values(patient.entries).map((entry: Entry) => (
             <div
               key={entry.id}
-              style={{ borderStyle: "solid", padding: "10px", margin: "5px" }}
+              style={{
+                borderStyle: "solid",
+                padding: "10px",
+                marginBottom: "15px",
+              }}
             >
               <EntryDetails entry={entry} diagnoses={diagnoses} />
             </div>
@@ -123,3 +148,7 @@ const Entries = ({ patient }: EntryProps): JSX.Element => {
 };
 
 export default Entries;
+
+function assertNever(_entry: never): JSX.Element {
+  throw new Error("Function not implemented.");
+}
