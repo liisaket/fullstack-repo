@@ -33,7 +33,6 @@ export type Entry =
 
 type UnionOmit<T, K extends keyof any> = T extends unknown ? Omit<T, K> : never;
 
-// Alias for NewEntry for better readability
 export type NewEntry = UnionOmit<Entry, "id">;
 
 export interface BaseEntry {

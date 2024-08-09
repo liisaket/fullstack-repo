@@ -33,13 +33,14 @@ router.post("/", (req, res) => {
 
 router.post("/:id/entries", (req, res) => {
   try {
+    console.log("back", req.body);
     const newEntry = toNewEntry(req.body);
     const patient = patientService.findById(req.params.id);
     if (!patient) {
       return res.sendStatus(404);
     }
-    const addedEntry = patientService.addEntry(patient, newEntry);
-    return res.json(addedEntry);
+    const updatedPatient = patientService.addEntry(patient, newEntry);
+    return res.json(updatedPatient);
   } catch (error: unknown) {
     let errorMessage = "Something went wrong.";
     if (error instanceof Error) {

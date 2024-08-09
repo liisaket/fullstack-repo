@@ -22,7 +22,9 @@ export interface Patient {
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
 
-export type EntryFormValues = Omit<Entry, "id">;
+type UnionOmit<T, K extends keyof any> = T extends unknown ? Omit<T, K> : never;
+
+export type EntryFormValues = UnionOmit<Entry, "id">;
 
 export type Entry =
   | HospitalEntry

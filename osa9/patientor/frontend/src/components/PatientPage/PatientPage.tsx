@@ -7,6 +7,7 @@ import Male from "@mui/icons-material/Male";
 import Entries from "../Entries/Entries";
 import AddEntryModal from "../Entries/AddEntryModal";
 import { Button } from "@mui/material";
+import axios from "axios";
 
 const PatientPage = () => {
   const [patient, setPatient] = useState<Patient | undefined>();
@@ -34,8 +35,31 @@ const PatientPage = () => {
     void fetchPatient();
   }, [id]);
 
-  const submit = async (_values: EntryFormValues) => {
-    return;
+  const submitNewEntry = async (values: EntryFormValues) => {
+    try {
+      const updatedPatient = await patientService.createNewEntry(
+        id as string,
+        values
+      );
+      setPatient(updatedPatient);
+      setModalOpen(false);
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === "string") {
+          const message = e.response.data.replace(
+            "Something went wrong. Error: ",
+            ""
+          );
+          console.error(message);
+          setError(message);
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
   };
 
   return (
@@ -52,7 +76,7 @@ const PatientPage = () => {
           <Entries patient={patient} />
           <AddEntryModal
             modalOpen={modalOpen}
-            onSubmit={submit}
+            onSubmit={submitNewEntry}
             error={error}
             onClose={closeModal}
           />

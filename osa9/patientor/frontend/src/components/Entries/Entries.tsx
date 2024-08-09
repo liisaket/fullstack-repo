@@ -1,8 +1,9 @@
-import { Diagnosis, Entry, Patient } from "../../types";
+import { Diagnosis, Entry, Patient, HealthCheckRating } from "../../types";
 import diagnosesService from "../../services/diagnoses";
 import { useEffect, useState } from "react";
 import LocalHospital from "@mui/icons-material/LocalHospital";
 import Work from "@mui/icons-material/Work";
+import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 
 interface EntryProps {
   patient: Patient;
@@ -49,7 +50,7 @@ const EntryDetails = ({ entry, diagnoses }: EntryDetailsProps): JSX.Element => {
       return (
         <div key={entry.id}>
           <p>
-            <b>{entry.date}</b> <Work />
+            <b>{entry.date}</b> <Work /> {entry.employerName}
           </p>
           <i>{entry.description}</i>
           {entry.sickLeave && (
@@ -76,17 +77,17 @@ const EntryDetails = ({ entry, diagnoses }: EntryDetailsProps): JSX.Element => {
         </div>
       );
     case "HealthCheck":
-      // health check rating from numbers to strings !
       return (
         <div key={entry.id}>
           <p>
-            <b>{entry.date}</b> <Work />
+            <b>{entry.date}</b> <MonitorHeartIcon />
           </p>
           <i>{entry.description}</i>
           {entry.healthCheckRating && (
             <div>
               <p>
-                health check rating: <b>{entry.healthCheckRating}</b>
+                health check rating:{" "}
+                <b>{HealthCheckRating[entry.healthCheckRating]}</b>
               </p>
             </div>
           )}

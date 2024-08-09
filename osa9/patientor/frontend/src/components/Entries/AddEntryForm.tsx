@@ -8,8 +8,8 @@ import {
   FormControl,
   Grid,
 } from "@mui/material";
-import { useState } from "react";
-import { EntryFormValues } from "../../types";
+import { SyntheticEvent, useState } from "react";
+import { Entry, EntryFormValues } from "../../types";
 
 interface Props {
   onCancel: () => void;
@@ -18,10 +18,10 @@ interface Props {
 
 interface FormData {
   date: string;
-  type: string;
+  type: "" | "Hospital" | "OccupationalHealthcare" | "HealthCheck";
   description: string;
   specialist: string;
-  diagnosisCodes: string[];
+  diagnosisCodes: string;
   dischargeDate?: string;
   dischargeCriteria?: string;
   employerName?: string;
@@ -36,7 +36,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
     type: "",
     description: "",
     specialist: "",
-    diagnosisCodes: [],
+    diagnosisCodes: "",
     dischargeDate: "",
     dischargeCriteria: "",
     employerName: "",
@@ -47,7 +47,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
 
   const handleChange = (
     event: React.ChangeEvent<
-      HTMLInputElement | { name?: string; value: unknown }
+      HTMLInputElement | { name: string; value: unknown }
     >
   ) => {
     const { name, value } = event.target;
@@ -69,13 +69,38 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
     }
   };
 
+  const addEntry = (event: SyntheticEvent) => {
+    event.preventDefault();
+    onSubmit({
+      date: formData.date,
+      type: formData.type as
+        | "Hospital"
+        | "OccupationalHealthcare"
+        | "HealthCheck",
+      specialist: formData.specialist,
+      description: formData.description,
+      diagnosisCodes: formData.diagnosisCodes.split(", "),
+      discharge: {
+        date: formData.dischargeDate as string,
+        criteria: formData.dischargeCriteria as string,
+      },
+      employerName: formData.employerName as string,
+      sickLeave: {
+        startDate: formData.sickLeaveStartDate as string,
+        endDate: formData.sickLeaveEndDate as string,
+      },
+      healthCheckRating: Number(formData.healthCheckRating),
+    });
+  };
+
   return (
     <div>
-      <form>
+      <form onSubmit={addEntry}>
         <TextField
           variant="standard"
           label="Date"
           placeholder="YYYY-MM-DD"
+          name="date"
           value={formData.date}
           fullWidth
           onChange={handleChange}
@@ -83,6 +108,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
         <TextField
           variant="standard"
           label="Specialist"
+          name="specialist"
           value={formData.specialist}
           fullWidth
           onChange={handleChange}
@@ -90,6 +116,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
         <TextField
           variant="standard"
           label="Description"
+          name="description"
           value={formData.description}
           fullWidth
           onChange={handleChange}
@@ -97,6 +124,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
         <TextField
           variant="standard"
           label="Diagnosis codes"
+          name="diagnosisCodes"
           value={formData.diagnosisCodes}
           fullWidth
           onChange={handleChange}
@@ -122,6 +150,8 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
             <TextField
               variant="standard"
               label="Discharge date"
+              name="dischargeDate"
+              placeholder="YYYY-MM-DD"
               value={formData.dischargeDate}
               fullWidth
               onChange={handleChange}
@@ -129,7 +159,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
             <TextField
               variant="standard"
               label="Discharge criteria"
-              placeholder="YYYY-MM-DD"
+              name="dischargeCriteria"
               value={formData.dischargeCriteria}
               fullWidth
               onChange={handleChange}
@@ -141,6 +171,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
             <TextField
               variant="standard"
               label="Employer"
+              name="employerName"
               value={formData.employerName}
               fullWidth
               onChange={handleChange}
@@ -148,6 +179,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
             <TextField
               variant="standard"
               label="Sick leave start date"
+              name="sickLeaveStartDate"
               placeholder="YYYY-MM-DD"
               value={formData.sickLeaveStartDate}
               fullWidth
@@ -156,6 +188,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
             <TextField
               variant="standard"
               label="Sick leave end date"
+              name="sickLeaveEndDate"
               placeholder="YYYY-MM-DD"
               value={formData.sickLeaveEndDate}
               fullWidth
@@ -168,7 +201,8 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
             <TextField
               variant="standard"
               label="Health check rating"
-              placeholder="0-3"
+              name="healthCheckRating"
+              placeholder="0=Healthy 1=Low risk 2=High risk 3=Critical risk"
               value={formData.healthCheckRating}
               fullWidth
               onChange={handleChange}

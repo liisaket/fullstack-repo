@@ -4,7 +4,6 @@ import {
   Patient,
   NonSensitivePatientData,
   NewPatient,
-  Entry,
   NewEntry,
 } from "../utilities/types";
 
@@ -39,14 +38,14 @@ const addPatient = (patient: NewPatient): Patient => {
   return newPatient;
 };
 
-const addEntry = (patient: Patient, entry: NewEntry): Entry => {
+const addEntry = (patient: Patient, entry: NewEntry): Patient => {
   const newEntry = {
     id: uuid(),
     ...entry,
   };
 
   patient.entries.push(newEntry);
-  return newEntry;
+  return patient;
 };
 
 export default {
