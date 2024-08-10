@@ -73,16 +73,21 @@ const PatientPage = () => {
           </h1>
           <p>ssh: {patient.ssn}</p>
           <p>occupation: {patient.occupation}</p>
-          <Entries patient={patient} />
+          <h2>entries</h2>
           <AddEntryModal
             modalOpen={modalOpen}
             onSubmit={submitNewEntry}
             error={error}
             onClose={closeModal}
           />
-          <Button variant="contained" onClick={() => openModal()}>
+          <Button
+            variant="contained"
+            style={{ marginBottom: "15px" }}
+            onClick={() => openModal()}
+          >
             New entry
           </Button>
+          <Entries patient={patient} />
         </div>
       )}
     </div>

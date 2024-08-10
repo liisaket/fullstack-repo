@@ -23,14 +23,9 @@ const EntryDetails = ({ entry, diagnoses }: EntryDetailsProps): JSX.Element => {
             <b>{entry.date}</b> <LocalHospital />
           </p>
           <i>{entry.description}</i>
-          {entry.discharge && (
-            <div>
-              <p>
-                discharge <b>{entry.discharge.date}</b>:{" "}
-                {entry.discharge.criteria}
-              </p>
-            </div>
-          )}
+          <p>
+            discharge <b>{entry.discharge.date}</b>: {entry.discharge.criteria}
+          </p>
           {entry.diagnosisCodes && entry.diagnosisCodes.length > 0 && (
             <ul>
               {entry.diagnosisCodes.map((code) => {
@@ -53,14 +48,10 @@ const EntryDetails = ({ entry, diagnoses }: EntryDetailsProps): JSX.Element => {
             <b>{entry.date}</b> <Work /> {entry.employerName}
           </p>
           <i>{entry.description}</i>
-          {entry.sickLeave && (
-            <div>
-              <p>
-                sick leave from <b>{entry.sickLeave.startDate}</b> to{" "}
-                <b>{entry.sickLeave.endDate}</b>
-              </p>
-            </div>
-          )}
+          <p>
+            sick leave from <b>{entry.sickLeave.startDate}</b> to{" "}
+            <b>{entry.sickLeave.endDate}</b>
+          </p>
           {entry.diagnosisCodes && entry.diagnosisCodes.length > 0 && (
             <ul>
               {entry.diagnosisCodes.map((code) => {
@@ -83,14 +74,10 @@ const EntryDetails = ({ entry, diagnoses }: EntryDetailsProps): JSX.Element => {
             <b>{entry.date}</b> <MonitorHeartIcon />
           </p>
           <i>{entry.description}</i>
-          {entry.healthCheckRating && (
-            <div>
-              <p>
-                health check rating:{" "}
-                <b>{HealthCheckRating[entry.healthCheckRating]}</b>
-              </p>
-            </div>
-          )}
+          <p>
+            health check rating:{" "}
+            <b>{HealthCheckRating[entry.healthCheckRating]}</b>
+          </p>
           {entry.diagnosisCodes && entry.diagnosisCodes.length > 0 && (
             <ul>
               {entry.diagnosisCodes.map((code) => {
@@ -129,7 +116,6 @@ const Entries = ({ patient }: EntryProps): JSX.Element => {
     <div>
       {patient && (
         <div>
-          <h2>entries</h2>
           {Object.values(patient.entries).map((entry: Entry) => (
             <div
               key={entry.id}

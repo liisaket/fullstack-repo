@@ -6,7 +6,7 @@ import {
   Alert,
 } from "@mui/material";
 
-import NewEntry from "./AddEntryForm";
+import AddEntryForm from "./AddEntryForm";
 import { EntryFormValues } from "../../types";
 
 interface Props {
@@ -22,7 +22,7 @@ const AddEntryModal = ({ modalOpen, onClose, onSubmit, error }: Props) => (
     <Divider />
     <DialogContent>
       {error && <Alert severity="error">{error}</Alert>}
-      <NewEntry onSubmit={onSubmit} onCancel={onClose} />
+      <AddEntryForm onSubmit={onSubmit} onCancel={onClose} />
     </DialogContent>
   </Dialog>
 );

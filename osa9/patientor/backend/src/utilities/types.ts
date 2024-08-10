@@ -31,6 +31,7 @@ export type Entry =
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UnionOmit<T, K extends keyof any> = T extends unknown ? Omit<T, K> : never;
 
 export type NewEntry = UnionOmit<Entry, "id">;

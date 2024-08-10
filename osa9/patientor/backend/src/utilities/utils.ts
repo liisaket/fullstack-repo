@@ -105,6 +105,7 @@ export const toNewEntry = (object: unknown): NewEntry => {
   throw new Error("Incorrect or missing data");
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function assertNever(_entry: any): NewEntry {
-  throw new Error("Function not implemented.");
+  throw new Error("Incorrect or missing data.");
 }

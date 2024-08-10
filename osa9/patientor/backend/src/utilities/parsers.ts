@@ -72,13 +72,25 @@ export const parseSSN = (object: unknown): FinnishSSN => {
 
 export const parseCode = (diagnosisCodes: unknown): Array<string> => {
   const diagnoses = diagnosesService.getDiagnoses();
+
+  if (!diagnosisCodes) {
+    return []; // undefined or null cases
+  }
+
+  if (Array.isArray(diagnosisCodes) && diagnosisCodes.length === 0) {
+    return []; // diagnosisCodes is an empty array
+  }
+
   if (
     Array.isArray(diagnosisCodes) &&
-    diagnosisCodes.every((code) => typeof code === "string") &&
+    diagnosisCodes.every(
+      (code) => typeof code === "string" && code.trim() !== ""
+    ) &&
     diagnosisCodes.every((code) =>
       diagnoses.some((diagnosis) => diagnosis.code === code)
     )
   ) {
+    /* eslint-disable-next-line @typescript-eslint/no-unsafe-return */
     return diagnosisCodes;
   }
   throw new Error("Incorrect data: diagnosis codes are incorrect");
@@ -86,12 +98,17 @@ export const parseCode = (diagnosisCodes: unknown): Array<string> => {
 
 const isHealthCheckRating = (param: number): param is HealthCheckRating => {
   return Object.values(HealthCheckRating)
-    .map((r) => r)
+    .filter((value) => typeof value === "number")
     .includes(param);
 };
 
 export const parseHealthCheck = (rating: unknown): HealthCheckRating => {
-  if (!rating || typeof rating !== "number" || !isHealthCheckRating(rating)) {
+  if (
+    rating === null ||
+    rating === undefined ||
+    typeof rating !== "number" ||
+    !isHealthCheckRating(rating)
+  ) {
     throw new Error(`Incorrect or missing health check rating: ${rating}`);
   }
   return rating;

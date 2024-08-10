@@ -7,9 +7,11 @@ import {
   InputLabel,
   FormControl,
   Grid,
+  Input,
 } from "@mui/material";
-import { SyntheticEvent, useState } from "react";
-import { Entry, EntryFormValues } from "../../types";
+import { SyntheticEvent, useEffect, useState } from "react";
+import { Diagnosis, EntryFormValues } from "../../types";
+import diagnosesService from "../../services/diagnoses";
 
 interface Props {
   onCancel: () => void;
@@ -21,7 +23,7 @@ interface FormData {
   type: "" | "Hospital" | "OccupationalHealthcare" | "HealthCheck";
   description: string;
   specialist: string;
-  diagnosisCodes: string;
+  diagnosisCodes: string[];
   dischargeDate?: string;
   dischargeCriteria?: string;
   employerName?: string;
@@ -31,12 +33,13 @@ interface FormData {
 }
 
 const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
   const [formData, setFormData] = useState<FormData>({
     date: "",
     type: "",
     description: "",
     specialist: "",
-    diagnosisCodes: "",
+    diagnosisCodes: [],
     dischargeDate: "",
     dischargeCriteria: "",
     employerName: "",
@@ -45,7 +48,19 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
     healthCheckRating: "",
   });
 
-  const handleChange = (
+  useEffect(() => {
+    const fetchDiagnoses = async () => {
+      try {
+        const data = await diagnosesService.getAll();
+        setDiagnoses(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    void fetchDiagnoses();
+  }, []);
+
+  const handleEventChange = (
     event: React.ChangeEvent<
       HTMLInputElement | { name: string; value: unknown }
     >
@@ -59,7 +74,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
     }
   };
 
-  const handleTypeChange = (event: SelectChangeEvent<string>) => {
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
     if (name && name in formData) {
       setFormData((data) => ({
@@ -67,6 +82,13 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
         [name as keyof FormData]: value,
       }));
     }
+  };
+
+  const handleDiagnosesChange = (event: SelectChangeEvent<string[]>) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      diagnosisCodes: event.target.value as string[],
+    }));
   };
 
   const addEntry = (event: SyntheticEvent) => {
@@ -79,7 +101,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
         | "HealthCheck",
       specialist: formData.specialist,
       description: formData.description,
-      diagnosisCodes: formData.diagnosisCodes.split(", "),
+      diagnosisCodes: formData.diagnosisCodes,
       discharge: {
         date: formData.dischargeDate as string,
         criteria: formData.dischargeCriteria as string,
@@ -96,14 +118,12 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
   return (
     <div>
       <form onSubmit={addEntry}>
-        <TextField
-          variant="standard"
-          label="Date"
-          placeholder="YYYY-MM-DD"
+        <InputLabel variant="standard">Date</InputLabel>
+        <Input
+          type="date"
           name="date"
           value={formData.date}
-          fullWidth
-          onChange={handleChange}
+          onChange={handleEventChange}
         />
         <TextField
           variant="standard"
@@ -111,7 +131,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
           name="specialist"
           value={formData.specialist}
           fullWidth
-          onChange={handleChange}
+          onChange={handleEventChange}
         />
         <TextField
           variant="standard"
@@ -119,42 +139,57 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
           name="description"
           value={formData.description}
           fullWidth
-          onChange={handleChange}
+          onChange={handleEventChange}
         />
-        <TextField
-          variant="standard"
-          label="Diagnosis codes"
-          name="diagnosisCodes"
-          value={formData.diagnosisCodes}
-          fullWidth
-          onChange={handleChange}
-        />
+        <FormControl fullWidth>
+          <InputLabel variant="standard">Diagnosis codes</InputLabel>
+          <Select
+            multiple
+            variant="standard"
+            name="diagnosisCodes"
+            label="Diagnosis codes"
+            value={formData.diagnosisCodes}
+            onChange={handleDiagnosesChange}
+            renderValue={(selected) => selected.join(", ")}
+          >
+            {diagnoses.map((d) => (
+              <MenuItem key={d.code} value={d.code}>
+                {d.code} - {d.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <FormControl fullWidth>
           <InputLabel variant="standard">Type</InputLabel>
           <Select
             variant="standard"
             name="type"
             value={formData.type}
-            onChange={handleTypeChange}
+            onChange={handleSelectChange}
             label="Type"
           >
-            <MenuItem value="Hospital">Hospital</MenuItem>
-            <MenuItem value="OccupationalHealthcare">
+            <MenuItem key="Hospital" value="Hospital">
+              Hospital
+            </MenuItem>
+            <MenuItem
+              key="OccupationalHealthcare"
+              value="OccupationalHealthcare"
+            >
               Occupational Healthcare
             </MenuItem>
-            <MenuItem value="HealthCheck">Health Check</MenuItem>
+            <MenuItem key="HealthCheck" value="HealthCheck">
+              Health Check
+            </MenuItem>
           </Select>
         </FormControl>
         {formData.type === "Hospital" && (
           <div>
-            <TextField
-              variant="standard"
-              label="Discharge date"
+            <InputLabel variant="standard">Discharge date</InputLabel>
+            <Input
+              type="date"
               name="dischargeDate"
-              placeholder="YYYY-MM-DD"
               value={formData.dischargeDate}
-              fullWidth
-              onChange={handleChange}
+              onChange={handleEventChange}
             />
             <TextField
               variant="standard"
@@ -162,7 +197,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
               name="dischargeCriteria"
               value={formData.dischargeCriteria}
               fullWidth
-              onChange={handleChange}
+              onChange={handleEventChange}
             />
           </div>
         )}
@@ -174,39 +209,53 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
               name="employerName"
               value={formData.employerName}
               fullWidth
-              onChange={handleChange}
+              onChange={handleEventChange}
             />
-            <TextField
+            <InputLabel
               variant="standard"
-              label="Sick leave start date"
-              name="sickLeaveStartDate"
-              placeholder="YYYY-MM-DD"
-              value={formData.sickLeaveStartDate}
-              fullWidth
-              onChange={handleChange}
-            />
-            <TextField
-              variant="standard"
-              label="Sick leave end date"
-              name="sickLeaveEndDate"
-              placeholder="YYYY-MM-DD"
-              value={formData.sickLeaveEndDate}
-              fullWidth
-              onChange={handleChange}
-            />
+              style={{ marginTop: "10px", marginBottom: "10px" }}
+            >
+              Sick leave
+              <InputLabel variant="standard" style={{ margin: "5px" }}>
+                start
+              </InputLabel>
+              <Input
+                style={{ marginLeft: "5px" }}
+                type="date"
+                name="sickLeaveStartDate"
+                value={formData.sickLeaveStartDate}
+                onChange={handleEventChange}
+              />
+              <InputLabel variant="standard" style={{ margin: "5px" }}>
+                end
+              </InputLabel>
+              <Input
+                style={{ marginLeft: "5px" }}
+                type="date"
+                name="sickLeaveEndDate"
+                value={formData.sickLeaveEndDate}
+                onChange={handleEventChange}
+              />
+            </InputLabel>
           </div>
         )}
         {formData.type === "HealthCheck" && (
           <div>
-            <TextField
-              variant="standard"
-              label="Health check rating"
-              name="healthCheckRating"
-              placeholder="0=Healthy 1=Low risk 2=High risk 3=Critical risk"
-              value={formData.healthCheckRating}
-              fullWidth
-              onChange={handleChange}
-            />
+            <FormControl fullWidth>
+              <InputLabel variant="standard">Health check rating</InputLabel>
+              <Select
+                variant="standard"
+                name="healthCheckRating"
+                value={formData.healthCheckRating}
+                onChange={handleSelectChange}
+                label="Health check"
+              >
+                <MenuItem value="0">Healthy</MenuItem>
+                <MenuItem value="1">Low risk</MenuItem>
+                <MenuItem value="2">High risk</MenuItem>
+                <MenuItem value="3">Critical risk</MenuItem>
+              </Select>
+            </FormControl>
           </div>
         )}
 
@@ -215,7 +264,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
             <Button
               color="secondary"
               variant="contained"
-              style={{ float: "left" }}
+              style={{ float: "left", marginTop: "10px" }}
               type="button"
               onClick={onCancel}
             >
@@ -226,6 +275,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props): JSX.Element => {
             <Button
               style={{
                 float: "right",
+                marginTop: "10px",
               }}
               type="submit"
               variant="contained"
